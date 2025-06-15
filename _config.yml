@@ -1,0 +1,25 @@
+# GitHub Pages Configuration
+# This file tells GitHub Pages how to build your site
+
+# Theme (optional - we're not using Jekyll themes since this is a static site)
+# theme: none
+
+# Exclude files from being processed/deployed
+exclude:
+  - node_modules
+  - package-lock.json
+  - README.md
+  - .gitignore
+  - test-screenshots
+  - "*.test.js"
+  - "*.spec.js"
+
+# Include the themes directory explicitly
+include:
+  - themes
+
+# Plugins (we don't need any for this static site)
+plugins: []
+
+# Since this is a single-page app, handle 404s by redirecting to index
+# (GitHub Pages doesn't support this directly, but keeping for reference)

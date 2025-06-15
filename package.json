@@ -1,0 +1,12 @@
+{
+  "name": "regex-tester",
+  "version": "1.0.0",
+  "description": "Multi-mode regex tester supporting JavaScript, PCRE, grep, egrep, Vim, Python, and sed regex flavors",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000 || python -m SimpleHTTPServer 8000"
+  },
+  "keywords": ["regex", "regular-expression", "tester", "pcre", "grep", "vim", "python"],
+  "author": "",
+  "license": "ISC"
+}
