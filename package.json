@@ -1,7 +1,7 @@
 {
   "name": "regex-tester",
-  "version": "1.0.0",
-  "description": "Multi-mode regex tester supporting JavaScript, PCRE, grep, egrep, Vim, Python, and sed regex flavors",
+  "version": "2.0.0",
+  "description": "Advanced multi-mode regex tester with syntax highlighting, pattern explanations, live replacement preview, and pattern library",
   "main": "index.html",
   "scripts": {
     "start": "python3 -m http.server 8000 || python -m SimpleHTTPServer 8000"

@@ -556,6 +556,12 @@ class RegexTester {
         
         // Initialize enhanced tooltips
         this.tooltips = new EnhancedTooltips();
+        
+        // Initialize replacement preview
+        this.replacementPreview = new ReplacementPreview();
+        
+        // Initialize pattern library
+        this.patternLibrary = new PatternLibrary();
     }
 
     updateHelp() {
@@ -947,6 +953,11 @@ class RegexTester {
         // Update pattern explanation
         if (this.explainer) {
             this.explainer.explain(originalPattern, mode);
+        }
+        
+        // Update replacement preview
+        if (this.replacementPreview) {
+            this.replacementPreview.updatePreview(originalPattern, originalFlags, text);
         }
         
         if (!originalPattern) {

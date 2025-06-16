@@ -33,6 +33,13 @@ A powerful, browser-based regex tester that supports multiple regex flavors incl
 - **Pattern transformation** between different regex flavors
 - **Responsive design** that works on all devices
 
+### 🚀 New Enhanced Features
+- **Syntax Highlighting** - Color-coded regex components in the pattern input
+- **Pattern Explanation** - Hierarchical breakdown of your regex with plain English descriptions
+- **Enhanced Tooltips** - Hover over any regex component for detailed help and examples
+- **Live Replacement Preview** - See replacements in real-time with capture group support
+- **Pattern Library** - 40+ common patterns with one-click usage and custom pattern saving
+
 ## Quick Start
 
 ### Option 1: Use Online (GitHub Pages / GitLab Pages)
