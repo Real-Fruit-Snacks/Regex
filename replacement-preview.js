@@ -405,8 +405,8 @@ class ReplacementPreview {
 const replacementStyles = `
 <style>
 .replacement-section {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
+  background: #ffffff;
+  border: 1px solid #ddd;
   border-radius: 8px;
   margin: 20px 0;
   overflow: hidden;
@@ -416,15 +416,15 @@ const replacementStyles = `
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  background: #e9ecef;
-  border-bottom: 1px solid #dee2e6;
+  padding: 20px;
+  background: #ecf0f1;
+  border-bottom: 1px solid #ddd;
 }
 
 .replacement-header h2 {
   margin: 0;
   font-size: 1.2rem;
-  color: #495057;
+  color: #2c3e50;
 }
 
 .replacement-toggle {
@@ -451,7 +451,7 @@ const replacementStyles = `
   display: block;
   margin-bottom: 5px;
   font-weight: 600;
-  color: #495057;
+  color: #2c3e50;
 }
 
 #replacement-input {
@@ -459,14 +459,14 @@ const replacementStyles = `
   padding: 8px 35px 8px 12px;
   font-size: 14px;
   font-family: monospace;
-  border: 2px solid #ced4da;
+  border: 2px solid #ddd;
   border-radius: 4px;
   background: white;
 }
 
 #replacement-input:focus {
   outline: none;
-  border-color: #80bdff;
+  border-color: #3498db;
 }
 
 .replacement-help {
@@ -481,7 +481,7 @@ const replacementStyles = `
   justify-content: center;
   width: 20px;
   height: 20px;
-  background: #6c757d;
+  background: #7f8c8d;
   color: white;
   border-radius: 50%;
   font-size: 12px;
@@ -495,7 +495,7 @@ const replacementStyles = `
   right: 0;
   top: 25px;
   background: white;
-  border: 1px solid #dee2e6;
+  border: 1px solid #ddd;
   border-radius: 4px;
   padding: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -506,7 +506,7 @@ const replacementStyles = `
 .help-tooltip h4 {
   margin: 0 0 8px 0;
   font-size: 14px;
-  color: #495057;
+  color: #2c3e50;
 }
 
 .help-tooltip ul {
@@ -520,11 +520,11 @@ const replacementStyles = `
 }
 
 .help-tooltip code {
-  background: #f8f9fa;
+  background: #ffffff;
   padding: 1px 4px;
   border-radius: 2px;
   font-family: monospace;
-  color: #e83e8c;
+  color: #e74c3c;
 }
 
 .replacement-options {
@@ -540,7 +540,7 @@ const replacementStyles = `
   gap: 5px;
   cursor: pointer;
   font-size: 14px;
-  color: #495057;
+  color: #2c3e50;
 }
 
 .replacement-preview {
@@ -553,7 +553,7 @@ const replacementStyles = `
 
 .preview-pane {
   background: white;
-  border: 1px solid #dee2e6;
+  border: 1px solid #ddd;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -561,10 +561,10 @@ const replacementStyles = `
 .preview-pane h3 {
   margin: 0;
   padding: 10px 15px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #dee2e6;
+  background: #ffffff;
+  border-bottom: 1px solid #ddd;
   font-size: 14px;
-  color: #495057;
+  color: #2c3e50;
 }
 
 .preview-content {
@@ -574,7 +574,7 @@ const replacementStyles = `
   font-size: 14px;
   white-space: pre-wrap;
   word-break: break-all;
-  color: #212529;
+  color: #2c3e50;
   line-height: 1.5;
 }
 
@@ -583,41 +583,41 @@ const replacementStyles = `
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  color: #6c757d;
+  color: #7f8c8d;
 }
 
 .preview-empty {
-  color: #6c757d;
+  color: #7f8c8d;
   font-style: italic;
 }
 
 .preview-error {
-  color: #dc3545;
+  color: #e74c3c;
 }
 
 .match-highlight {
-  background: #fff3cd;
+  background: rgba(243, 156, 18, 0.1);
   padding: 2px 0;
   border-radius: 2px;
-  box-shadow: 0 0 0 1px #ffeaa7;
+  box-shadow: 0 0 0 1px rgba(243, 156, 18, 0.2);
 }
 
 .change-highlight {
-  background: #d1ecf1;
+  background: rgba(52, 152, 219, 0.1);
   padding: 2px 0;
   border-radius: 2px;
-  box-shadow: 0 0 0 1px #bee5eb;
+  box-shadow: 0 0 0 1px rgba(26, 188, 156, 0.1);
 }
 
 .replacement-stats {
   display: flex;
   gap: 20px;
   font-size: 14px;
-  color: #6c757d;
+  color: #7f8c8d;
 }
 
 .stat-item strong {
-  color: #495057;
+  color: #2c3e50;
 }
 
 /* Dark theme adjustments */

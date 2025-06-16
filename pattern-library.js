@@ -684,8 +684,8 @@ class PatternLibrary {
 const libraryStyles = `
 <style>
 .pattern-library-section {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
+  background: #ecf0f1;
+  border: 1px solid #ddd;
   border-radius: 8px;
   margin: 20px 0;
   overflow: hidden;
@@ -695,16 +695,16 @@ const libraryStyles = `
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  background: #e9ecef;
-  border-bottom: 1px solid #dee2e6;
+  padding: 20px;
+  background: #ecf0f1;
+  border-bottom: 1px solid #ddd;
   cursor: pointer;
 }
 
 .library-header h2 {
   margin: 0;
   font-size: 1.2rem;
-  color: #495057;
+  color: #2c3e50;
 }
 
 .library-toggle {
@@ -715,12 +715,12 @@ const libraryStyles = `
   border: none;
   cursor: pointer;
   padding: 5px 10px;
-  color: #495057;
+  color: #2c3e50;
   font-size: 14px;
 }
 
 .library-toggle:hover {
-  color: #007bff;
+  color: #3498db;
 }
 
 .toggle-icon {
@@ -744,14 +744,14 @@ const libraryStyles = `
   width: 100%;
   padding: 8px 12px;
   font-size: 14px;
-  border: 2px solid #ced4da;
+  border: 2px solid #ddd;
   border-radius: 4px;
   background: white;
 }
 
 #pattern-search:focus {
   outline: none;
-  border-color: #80bdff;
+  border-color: #3498db;
 }
 
 .library-categories {
@@ -764,21 +764,21 @@ const libraryStyles = `
   padding: 6px 12px;
   font-size: 13px;
   background: white;
-  border: 1px solid #dee2e6;
+  border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .category-btn:hover {
-  background: #f8f9fa;
-  border-color: #adb5bd;
+  background: #ecf0f1;
+  border-color: #95a5a6;
 }
 
 .category-btn.active {
-  background: #007bff;
+  background: #3498db;
   color: white;
-  border-color: #007bff;
+  border-color: #3498db;
 }
 
 .pattern-list {
@@ -791,8 +791,8 @@ const libraryStyles = `
 
 .pattern-item {
   background: white;
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   padding: 15px;
   transition: box-shadow 0.2s;
 }
@@ -811,25 +811,25 @@ const libraryStyles = `
 .pattern-name {
   margin: 0;
   font-size: 16px;
-  color: #212529;
+  color: #2c3e50;
 }
 
 .pattern-badge {
   font-size: 11px;
   padding: 2px 6px;
-  background: #6c757d;
+  background: #7f8c8d;
   color: white;
   border-radius: 3px;
 }
 
 .pattern-description {
   font-size: 14px;
-  color: #6c757d;
+  color: #7f8c8d;
   margin-bottom: 10px;
 }
 
 .pattern-code {
-  background: #f8f9fa;
+  background: #ecf0f1;
   padding: 8px 12px;
   border-radius: 4px;
   margin-bottom: 10px;
@@ -839,18 +839,18 @@ const libraryStyles = `
 }
 
 .pattern-code code {
-  color: #e83e8c;
+  color: #e74c3c;
 }
 
 .pattern-flags {
-  color: #6c757d;
+  color: #7f8c8d;
   margin-left: 5px;
 }
 
 .pattern-examples {
   font-size: 13px;
   margin-bottom: 10px;
-  color: #495057;
+  color: #2c3e50;
 }
 
 .examples-label {
@@ -859,7 +859,7 @@ const libraryStyles = `
 }
 
 .example-item {
-  background: #e9ecef;
+  background: #ecf0f1;
   padding: 2px 6px;
   border-radius: 3px;
   font-family: monospace;
@@ -882,26 +882,26 @@ const libraryStyles = `
 }
 
 .btn-use-pattern {
-  background: #28a745;
+  background: #27ae60;
   color: white;
 }
 
 .btn-use-pattern:hover {
-  background: #218838;
+  background: #229954;
 }
 
 .btn-delete-pattern {
-  background: #dc3545;
+  background: #e74c3c;
   color: white;
 }
 
 .btn-delete-pattern:hover {
-  background: #c82333;
+  background: #c0392b;
 }
 
 .no-patterns {
   text-align: center;
-  color: #6c757d;
+  color: #7f8c8d;
   padding: 40px 20px;
   font-style: italic;
 }
@@ -909,7 +909,7 @@ const libraryStyles = `
 .library-actions {
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid #dee2e6;
+  border-top: 1px solid #ddd;
 }
 
 .btn-save-current {
@@ -917,7 +917,7 @@ const libraryStyles = `
   align-items: center;
   gap: 5px;
   padding: 8px 16px;
-  background: #007bff;
+  background: #3498db;
   color: white;
   border: none;
   border-radius: 4px;
@@ -927,7 +927,7 @@ const libraryStyles = `
 }
 
 .btn-save-current:hover {
-  background: #0056b3;
+  background: #2980b9;
 }
 
 .btn-icon {
@@ -970,7 +970,7 @@ const libraryStyles = `
 
 .save-pattern-dialog h3 {
   margin: 0 0 20px 0;
-  color: #212529;
+  color: #2c3e50;
 }
 
 .dialog-content {
@@ -985,7 +985,7 @@ const libraryStyles = `
   display: block;
   margin-bottom: 5px;
   font-weight: 600;
-  color: #495057;
+  color: #2c3e50;
   font-size: 14px;
 }
 
@@ -994,7 +994,7 @@ const libraryStyles = `
   width: 100%;
   padding: 8px 12px;
   font-size: 14px;
-  border: 2px solid #ced4da;
+  border: 2px solid #ddd;
   border-radius: 4px;
   background: white;
 }
@@ -1002,7 +1002,7 @@ const libraryStyles = `
 .form-group input:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #80bdff;
+  border-color: #3498db;
 }
 
 .dialog-actions {
@@ -1022,21 +1022,21 @@ const libraryStyles = `
 }
 
 .btn-primary {
-  background: #007bff;
+  background: #3498db;
   color: white;
 }
 
 .btn-primary:hover {
-  background: #0056b3;
+  background: #2980b9;
 }
 
 .btn-secondary {
-  background: #6c757d;
+  background: #7f8c8d;
   color: white;
 }
 
 .btn-secondary:hover {
-  background: #545b62;
+  background: #34495e;
 }
 
 /* Dark theme adjustments */
@@ -1072,7 +1072,7 @@ body.dark-theme .category-btn:hover {
 }
 
 body.dark-theme .category-btn.active {
-  background: #007bff;
+  background: #3498db;
   color: white;
 }
 
@@ -1111,7 +1111,7 @@ body.dark-theme .form-group textarea {
 }
 
 .pattern-list::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #ecf0f1;
   border-radius: 4px;
 }
 

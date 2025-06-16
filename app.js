@@ -189,7 +189,7 @@ class RegexTester {
         
         // Update pattern explanation
         if (this.explainer) {
-            this.explainer.explain(this.regexInput.value, mode);
+            this.explainer.updateExplanation(this.regexInput.value, mode);
         }
     }
 
@@ -552,16 +552,23 @@ class RegexTester {
         
         // Initialize the pattern explainer
         this.explainer = new PatternExplainer();
-        this.explainer.initialize();
+        this.explainer.init('pattern-explanation-container', () => this.regexMode.value);
         
         // Initialize enhanced tooltips
         this.tooltips = new EnhancedTooltips();
+        this.tooltips.init();
         
         // Initialize replacement preview
         this.replacementPreview = new ReplacementPreview();
+        this.replacementPreview.init('replacement-section-container');
         
         // Initialize pattern library
         this.patternLibrary = new PatternLibrary();
+        this.patternLibrary.init('pattern-library-container', (pattern, flags) => {
+            this.regexInput.value = pattern;
+            this.regexFlags.value = flags || '';
+            this.updateMatches();
+        });
     }
 
     updateHelp() {
@@ -952,12 +959,12 @@ class RegexTester {
         
         // Update pattern explanation
         if (this.explainer) {
-            this.explainer.explain(originalPattern, mode);
+            this.explainer.updateExplanation(originalPattern, mode);
         }
         
         // Update replacement preview
         if (this.replacementPreview) {
-            this.replacementPreview.updatePreview(originalPattern, originalFlags, text);
+            this.replacementPreview.updatePreview(text, originalPattern, originalFlags, mode);
         }
         
         if (!originalPattern) {

@@ -311,27 +311,28 @@ const highlightStyles = `
 
 .pattern-highlight-overlay .regex {
   position: relative;
+  transition: background-color 0.2s ease;
 }
 
-/* Literals */
+/* Literals - using design system gray */
 .regex.literal {
-  color: #333;
+  color: #2c3e50;
 }
 
-/* Meta characters */
+/* Meta characters - using primary blue */
 .regex.metachar {
-  color: #0066cc;
+  color: #3498db;
   font-weight: bold;
 }
 
 .regex.dot {
-  color: #ff6b6b;
+  color: #e74c3c;
   font-weight: bold;
 }
 
-/* Anchors */
+/* Anchors - using success green */
 .regex.anchor {
-  color: #95e1d3;
+  color: #27ae60;
   font-weight: bold;
 }
 
@@ -353,50 +354,50 @@ const highlightStyles = `
   right: -2px;
 }
 
-/* Character classes */
+/* Character classes - using teal from design */
 .regex.char-class {
-  background-color: rgba(78, 205, 196, 0.1);
-  border-radius: 2px;
+  background-color: rgba(52, 152, 219, 0.1);
+  border-radius: 4px;
 }
 
 .regex.char-class.bracket {
-  color: #4ecdc4;
+  color: #16a085;
   font-weight: bold;
 }
 
 .regex.char-class.negated {
-  color: #ff6b6b;
+  color: #e74c3c;
 }
 
-/* Groups */
+/* Groups - using primary blue */
 .regex.group {
   position: relative;
 }
 
 .regex.group.paren {
-  color: #0066cc;
+  color: #3498db;
   font-weight: bold;
 }
 
 .regex.group.non-capturing {
-  color: #666;
+  color: #7f8c8d;
 }
 
 .regex.group.named {
-  color: #9c88ff;
-  background-color: rgba(156, 136, 255, 0.1);
-  border-radius: 2px;
+  color: #9b59b6;
+  background-color: rgba(155, 89, 182, 0.1);
+  border-radius: 4px;
   padding: 0 2px;
 }
 
-/* Assertions */
+/* Assertions - using orange */
 .regex.assertion {
   color: #f39c12;
   background-color: rgba(243, 156, 18, 0.1);
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
-/* Quantifiers */
+/* Quantifiers - using error red */
 .regex.quantifier {
   color: #e74c3c;
   font-weight: bold;
@@ -406,7 +407,7 @@ const highlightStyles = `
   color: #e67e22;
 }
 
-/* Escapes */
+/* Escapes - using purple */
 .regex.escape {
   color: #8e44ad;
 }
@@ -418,7 +419,7 @@ const highlightStyles = `
 
 .regex.escape.whitespace {
   background-color: rgba(52, 152, 219, 0.1);
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 .regex.escape.hex,
@@ -428,37 +429,38 @@ const highlightStyles = `
   font-size: 0.9em;
 }
 
-/* Backreferences */
+/* Backreferences - using light purple */
 .regex.backref {
   color: #9b59b6;
   text-decoration: underline;
   text-decoration-style: dashed;
 }
 
-/* Alternation */
+/* Alternation - using error red */
 .regex.alternation {
   color: #e74c3c;
   font-weight: bold;
   padding: 0 4px;
 }
 
-/* Modifiers */
+/* Modifiers - using secondary gray */
 .regex.modifier {
   color: #7f8c8d;
   font-style: italic;
 }
 
-/* Errors */
+/* Errors - using error red */
 .regex.error {
-  color: #c0392b;
-  background-color: rgba(192, 57, 43, 0.1);
-  border-bottom: 2px wavy #c0392b;
+  color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.1);
+  border-bottom: 2px wavy #e74c3c;
 }
 
-/* Hover effects */
+/* Hover effects - matching design system */
 .regex:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(52, 152, 219, 0.1);
   cursor: help;
+  border-radius: 4px;
 }
 
 /* Dark theme adjustments */

@@ -450,14 +450,15 @@ const tooltipStyles = `
 }
 
 .tooltip-content {
-  background: #1e1e1e;
-  color: #e0e0e0;
+  background: #2c3e50;
+  color: #ecf0f1;
   padding: 12px 16px;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   max-width: 400px;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .tooltip-header {
@@ -466,23 +467,23 @@ const tooltipStyles = `
   align-items: center;
   margin-bottom: 8px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #34495e;
 }
 
 .tooltip-title {
   font-weight: bold;
-  color: #4fc3f7;
+  color: #3498db;
   font-size: 15px;
 }
 
 .tooltip-mode {
   font-size: 12px;
-  color: #888;
+  color: #7f8c8d;
 }
 
 .tooltip-description {
   margin-bottom: 12px;
-  color: #b0b0b0;
+  color: #bdc3c7;
 }
 
 .tooltip-examples {
@@ -492,7 +493,7 @@ const tooltipStyles = `
 .examples-label {
   font-weight: bold;
   margin-bottom: 6px;
-  color: #4fc3f7;
+  color: #3498db;
   font-size: 13px;
 }
 
@@ -503,38 +504,38 @@ const tooltipStyles = `
 }
 
 .example-pattern {
-  background: #2a2a2a;
+  background: #34495e;
   padding: 2px 6px;
-  border-radius: 3px;
-  color: #4fc3f7;
+  border-radius: 4px;
+  color: #3498db;
 }
 
 .example-arrow {
-  color: #666;
+  color: #7f8c8d;
   margin: 0 8px;
 }
 
 .example-matches mark {
-  background: #4fc3f7;
-  color: #1e1e1e;
+  background: #3498db;
+  color: #ffffff;
   padding: 2px 4px;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 .example-text {
-  color: #888;
+  color: #7f8c8d;
   font-size: 12px;
   margin-left: 8px;
 }
 
 .tooltip-notes {
-  border-top: 1px solid #333;
+  border-top: 1px solid #34495e;
   padding-top: 8px;
 }
 
 .tooltip-note {
   font-size: 13px;
-  color: #888;
+  color: #7f8c8d;
   margin: 4px 0;
 }
 
@@ -553,7 +554,7 @@ const tooltipStyles = `
   bottom: -6px;
   width: 12px;
   height: 12px;
-  background: #1e1e1e;
+  background: #2c3e50;
   transform: rotate(45deg);
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -568,36 +569,36 @@ const tooltipStyles = `
 /* Light theme adjustments */
 body:not(.dark-theme) .tooltip-content {
   background: #ffffff;
-  color: #333;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: #2c3e50;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 1px solid #ddd;
 }
 
 body:not(.dark-theme) .tooltip-header {
-  border-bottom-color: #eee;
+  border-bottom-color: #ecf0f1;
 }
 
 body:not(.dark-theme) .tooltip-title {
-  color: #007bff;
+  color: #3498db;
 }
 
 body:not(.dark-theme) .tooltip-description {
-  color: #555;
+  color: #7f8c8d;
 }
 
 body:not(.dark-theme) .example-pattern {
-  background: #f8f9fa;
-  color: #007bff;
-  border: 1px solid #dee2e6;
+  background: #ecf0f1;
+  color: #3498db;
+  border: 1px solid #ddd;
 }
 
 body:not(.dark-theme) .example-matches mark {
-  background: #007bff;
+  background: #3498db;
   color: white;
 }
 
 body:not(.dark-theme) .tooltip-notes {
-  border-top-color: #eee;
+  border-top-color: #ecf0f1;
 }
 
 body:not(.dark-theme) .tooltip-arrow {

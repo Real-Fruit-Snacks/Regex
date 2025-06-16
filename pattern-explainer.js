@@ -487,20 +487,21 @@ class PatternExplainer {
 const explanationStyles = `
 <style>
 .explanation-panel {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
+  background: #ffffff;
+  border: 1px solid #ddd;
   border-radius: 8px;
   margin: 20px 0;
   overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .explanation-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 20px;
-  background: #e9ecef;
-  border-bottom: 1px solid #dee2e6;
+  padding: 20px;
+  background: #ecf0f1;
+  border-bottom: 1px solid #ddd;
   cursor: pointer;
   user-select: none;
 }
@@ -508,7 +509,7 @@ const explanationStyles = `
 .explanation-header h2 {
   margin: 0;
   font-size: 1.2rem;
-  color: #495057;
+  color: #2c3e50;
 }
 
 .explanation-toggle {
@@ -516,7 +517,7 @@ const explanationStyles = `
   border: none;
   cursor: pointer;
   padding: 5px;
-  color: #6c757d;
+  color: #7f8c8d;
   font-size: 16px;
 }
 
@@ -528,14 +529,14 @@ const explanationStyles = `
 
 .explanation-empty {
   text-align: center;
-  color: #6c757d;
+  color: #7f8c8d;
   font-style: italic;
   padding: 40px 20px;
 }
 
 .explanation-error {
-  background: #f8d7da;
-  color: #721c24;
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
   padding: 15px;
   border-radius: 4px;
   margin-bottom: 15px;
@@ -554,25 +555,25 @@ const explanationStyles = `
   padding: 15px;
   border-radius: 4px;
   margin-bottom: 20px;
-  border: 1px solid #dee2e6;
+  border: 1px solid #ddd;
 }
 
 .pattern-display {
   font-family: monospace;
   font-size: 1.2rem;
-  color: #212529;
+  color: #2c3e50;
   margin-bottom: 10px;
   word-break: break-all;
 }
 
 .pattern-mode {
   font-size: 0.9rem;
-  color: #6c757d;
+  color: #7f8c8d;
 }
 
 .explanation-mode-info {
-  background: #d1ecf1;
-  color: #0c5460;
+  background: rgba(52, 152, 219, 0.1);
+  color: #2980b9;
   padding: 10px 15px;
   border-radius: 4px;
   margin-bottom: 15px;
@@ -582,15 +583,21 @@ const explanationStyles = `
   background: white;
   padding: 15px;
   border-radius: 4px;
-  border: 1px solid #dee2e6;
+  border: 1px solid #ddd;
 }
 
 .explanation-item {
   margin: 10px 0;
-  padding: 10px;
-  border-left: 3px solid #007bff;
-  background: #f8f9fa;
-  border-radius: 0 4px 4px 0;
+  padding: 15px;
+  border-left: 4px solid #3498db;
+  background: #ecf0f1;
+  border-radius: 4px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.explanation-item:hover {
+  transform: translateX(5px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .explanation-main {
@@ -603,19 +610,19 @@ const explanationStyles = `
 .explanation-value {
   font-family: monospace;
   font-weight: bold;
-  color: #007bff;
+  color: #3498db;
   font-size: 1.1rem;
 }
 
 .explanation-desc {
-  color: #495057;
+  color: #2c3e50;
   flex: 1;
 }
 
 .explanation-quantifier {
   margin-top: 5px;
   padding-left: 20px;
-  color: #6c757d;
+  color: #7f8c8d;
   font-size: 0.9rem;
   font-style: italic;
 }
@@ -626,26 +633,26 @@ const explanationStyles = `
 }
 
 .detail-item {
-  color: #6c757d;
+  color: #7f8c8d;
   font-size: 0.9rem;
   margin: 3px 0;
 }
 
 .explanation-tips {
   margin-top: 20px;
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
+  background: rgba(243, 156, 18, 0.1);
+  border: 1px solid rgba(243, 156, 18, 0.2);
   padding: 15px;
   border-radius: 4px;
 }
 
 .explanation-tips h4 {
   margin: 0 0 10px 0;
-  color: #856404;
+  color: #f39c12;
 }
 
 .tip-item {
-  color: #856404;
+  color: #f39c12;
   margin: 5px 0;
   padding-left: 20px;
 }

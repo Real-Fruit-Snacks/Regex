@@ -100,3 +100,9 @@ FEATURE_SUMMARY.md
 # Test files
 test-parser.js
 test-*.js
+test-features.js
+test-features.html
+demo-features.html
+verify-syntax.js
+verify-styles.js
+test-report.md
