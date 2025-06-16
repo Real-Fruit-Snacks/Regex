@@ -3,444 +3,429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RegexPro - Professional Regex Testing Suite</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-    <link rel="apple-touch-icon" sizes="192x192" href="favicon-192x192.png">
-    
-    <!-- Web App Manifest -->
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0a0e1b">
-    
-    <!-- Fonts - Using display=swap for better offline performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    
+    <title>Regex Tester</title>
     <style>
-        /* Fallback fonts for offline mode */
-        @supports not (font-family: 'Inter') {
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-            }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        @supports not (font-family: 'JetBrains Mono') {
-            code, pre, .font-mono {
-                font-family: 'SF Mono', Consolas, 'Courier New', monospace !important;
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2563eb;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+        }
+
+        .regex-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .regex-input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .flags-input {
+            width: 80px;
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+
+        .flags-input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .test-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.2s;
+        }
+
+        .test-input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .results {
+            background: #f9fafb;
+            border-radius: 6px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .results-title {
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .match-count {
+            background: #2563eb;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .highlighted-text {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            min-height: 100px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .highlight {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 3px;
+            padding: 1px 2px;
+            font-weight: 500;
+        }
+
+        .error {
+            background: #fef2f2;
+            border: 1px solid #f87171;
+            border-radius: 4px;
+            padding: 15px;
+            color: #dc2626;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+
+        .help {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .help h3 {
+            color: #374151;
+            margin-bottom: 10px;
+        }
+
+        .help ul {
+            margin-left: 20px;
+        }
+
+        .help li {
+            margin-bottom: 5px;
+        }
+
+        .flag-hint {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .input-row {
+                flex-direction: column;
+            }
+            
+            .flags-input {
+                width: 100%;
             }
         }
     </style>
-    
-    <link rel="stylesheet" href="themes/cyber-pro.css" id="theme-stylesheet">
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="header-content">
-                <div class="logo-section">
-                    <h1>RegexPro</h1>
-                    <span class="version-badge">v2.0</span>
+        <div class="header">
+            <h1>Regex Tester</h1>
+        </div>
+        
+        <div class="content">
+            <div class="input-group">
+                <label for="regex">Regular Expression:</label>
+                <div class="input-row">
+                    <input 
+                        type="text" 
+                        id="regex" 
+                        class="regex-input" 
+                        placeholder="Enter your regex pattern..."
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                    <input 
+                        type="text" 
+                        id="flags" 
+                        class="flags-input" 
+                        placeholder="gim"
+                        autocomplete="off"
+                        spellcheck="false"
+                        maxlength="10"
+                    >
                 </div>
-                <div class="header-actions">
-                    <div class="theme-selector">
-                        <label>Theme</label>
-                        <div class="custom-dropdown" id="theme-dropdown">
-                            <div class="dropdown-selected" id="theme-dropdown-selected">
-                                <span class="selected-text">Cyber Pro</span>
-                                <span class="dropdown-arrow">▼</span>
-                            </div>
-                            <div class="dropdown-options" id="theme-dropdown-options">
-                                <div class="dropdown-option" data-value="cyber-pro">
-                                    <span class="option-name">Cyber Pro</span>
-                                    <span class="option-desc">(Professional)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="default">
-                                    <span class="option-name">Default</span>
-                                    <span class="option-desc">(Blue & Gray)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="dark">
-                                    <span class="option-name">Dark</span>
-                                    <span class="option-desc">(Night Mode)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="light">
-                                    <span class="option-name">Light</span>
-                                    <span class="option-desc">(Bright & Clean)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="monokai">
-                                    <span class="option-name">Monokai</span>
-                                    <span class="option-desc">(Classic Editor)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="solarized">
-                                    <span class="option-name">Solarized</span>
-                                    <span class="option-desc">(Low Contrast)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="dracula">
-                                    <span class="option-name">Dracula</span>
-                                    <span class="option-desc">(Dark & Vibrant)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="one-dark">
-                                    <span class="option-name">One Dark</span>
-                                    <span class="option-desc">(Atom Theme)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="nord">
-                                    <span class="option-name">Nord</span>
-                                    <span class="option-desc">(Arctic Colors)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="gruvbox-dark">
-                                    <span class="option-name">Gruvbox Dark</span>
-                                    <span class="option-desc">(Retro Warm)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="tokyo-night">
-                                    <span class="option-name">Tokyo Night</span>
-                                    <span class="option-desc">(Neon City)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="catppuccin-mocha">
-                                    <span class="option-name">Catppuccin</span>
-                                    <span class="option-desc">(Pastel Dark)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="ayu-light">
-                                    <span class="option-name">Ayu Light</span>
-                                    <span class="option-desc">(Modern Light)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="ayu-mirage">
-                                    <span class="option-name">Ayu Mirage</span>
-                                    <span class="option-desc">(Modern Medium)</span>
-                                </div>
-                                <div class="dropdown-option" data-value="ayu-dark">
-                                    <span class="option-name">Ayu Dark</span>
-                                    <span class="option-desc">(Modern Dark)</span>
-                                </div>
-                            </div>
-                        </div>
-                        <input type="hidden" id="theme-select" value="cyber-pro">
-                    </div>
-                    <button class="icon-button" id="shortcuts-button" title="Keyboard Shortcuts (Ctrl+/)">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="14" width="20" height="6" rx="2"/>
-                            <rect x="4" y="4" width="3" height="3" rx="1"/>
-                            <rect x="9" y="4" width="3" height="3" rx="1"/>
-                            <rect x="14" y="4" width="3" height="3" rx="1"/>
-                            <rect x="19" y="4" width="3" height="3" rx="1"/>
-                            <rect x="4" y="9" width="3" height="3" rx="1"/>
-                            <rect x="9" y="9" width="3" height="3" rx="1"/>
-                            <rect x="14" y="9" width="3" height="3" rx="1"/>
-                            <rect x="19" y="9" width="3" height="3" rx="1"/>
-                        </svg>
-                    </button>
-                    <button class="icon-button" id="help-button" title="Help & Documentation (F1)">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-                            <line x1="12" y1="17" x2="12.01" y2="17"/>
-                        </svg>
-                    </button>
+                <div class="flag-hint">Common flags: g (global), i (ignore case), m (multiline)</div>
+            </div>
+
+            <div class="input-group">
+                <label for="test-text">Test Text:</label>
+                <textarea 
+                    id="test-text" 
+                    class="test-input" 
+                    placeholder="Enter text to test against your regex..."
+                    spellcheck="false"
+                ></textarea>
+            </div>
+
+            <div class="results">
+                <div class="results-header">
+                    <div class="results-title">Results</div>
+                    <div class="match-count" id="match-count">0 matches</div>
+                </div>
+                <div class="highlighted-text" id="highlighted-text">
+                    Enter a regex pattern and test text to see matches highlighted here.
                 </div>
             </div>
-        </header>
 
-        <main>
-            <!-- Sidebar -->
-            <aside class="sidebar">
-                <!-- Pattern Library Section -->
-                <div class="sidebar-section">
-                    <div class="sidebar-header">
-                        <span>Pattern Library</span>
-                        <span id="pattern-count">0</span>
-                    </div>
-                    <div class="sidebar-content" id="pattern-library-container">
-                        <!-- Pattern library will be injected here -->
-                    </div>
-                </div>
+            <div class="help">
+                <h3>Quick Reference</h3>
+                <ul>
+                    <li><strong>\d</strong> - matches any digit (0-9)</li>
+                    <li><strong>\w</strong> - matches any word character (a-z, A-Z, 0-9, _)</li>
+                    <li><strong>\s</strong> - matches any whitespace character</li>
+                    <li><strong>.</strong> - matches any character except newline</li>
+                    <li><strong>+</strong> - matches one or more of the preceding character</li>
+                    <li><strong>*</strong> - matches zero or more of the preceding character</li>
+                    <li><strong>?</strong> - matches zero or one of the preceding character</li>
+                    <li><strong>[abc]</strong> - matches any character in the brackets</li>
+                    <li><strong>()</strong> - creates a capture group</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class SimpleRegexTester {
+            constructor() {
+                this.regexInput = document.getElementById('regex');
+                this.flagsInput = document.getElementById('flags');
+                this.testText = document.getElementById('test-text');
+                this.highlightedText = document.getElementById('highlighted-text');
+                this.matchCount = document.getElementById('match-count');
                 
-                <!-- Recent Patterns -->
-                <div class="sidebar-section">
-                    <div class="sidebar-header">
-                        <span>Recent Patterns</span>
-                        <button class="icon-button small" id="clear-recent" title="Clear recent">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="18" y1="6" x2="6" y2="18"/>
-                                <line x1="6" y1="6" x2="18" y2="18"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="sidebar-content" id="recent-patterns">
-                        <div class="empty-state">No recent patterns</div>
-                    </div>
-                </div>
+                this.init();
+            }
+
+            init() {
+                // Add event listeners
+                this.regexInput.addEventListener('input', () => this.testRegex());
+                this.flagsInput.addEventListener('input', () => this.testRegex());
+                this.testText.addEventListener('input', () => this.testRegex());
                 
-                <!-- Quick Actions -->
-                <div class="sidebar-section">
-                    <div class="sidebar-header">Quick Actions</div>
-                    <div class="sidebar-content">
-                        <button class="action-button" id="export-pattern">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="7 10 12 15 17 10"/>
-                                <line x1="12" y1="15" x2="12" y2="3"/>
-                            </svg>
-                            Export Pattern
-                        </button>
-                        <button class="action-button" id="share-pattern">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="18" cy="5" r="3"/>
-                                <circle cx="6" cy="12" r="3"/>
-                                <circle cx="18" cy="19" r="3"/>
-                                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                            </svg>
-                            Share Pattern
-                        </button>
-                    </div>
-                </div>
-            </aside>
-            
-            <!-- Main Content Area -->
-            <div class="content-area">
-                <div class="editor-container">
-                    <!-- Regex Input Section -->
-                    <div class="regex-section">
-                        <div class="section-header">
-                            <h2 class="section-title">Pattern Editor</h2>
-                            <div class="regex-controls">
-                                <div class="regex-mode-container">
-                                    <label for="regex-mode">Mode</label>
-                                    <div class="custom-dropdown" id="regex-mode-dropdown">
-                                        <div class="dropdown-selected" id="dropdown-selected">
-                                            <span class="selected-text">JavaScript</span>
-                                            <span class="dropdown-arrow">▼</span>
-                                        </div>
-                                        <div class="dropdown-options" id="dropdown-options">
-                                            <div class="dropdown-option" data-value="javascript">
-                                                <span class="option-name">JavaScript</span>
-                                                <span class="option-desc">(ECMAScript)</span>
-                                            </div>
-                                            <div class="dropdown-option" data-value="pcre">
-                                                <span class="option-name">PCRE</span>
-                                                <span class="option-desc">(Perl Compatible)</span>
-                                            </div>
-                                            <div class="dropdown-option" data-value="grep">
-                                                <span class="option-name">grep</span>
-                                                <span class="option-desc">(BRE)</span>
-                                            </div>
-                                            <div class="dropdown-option" data-value="egrep">
-                                                <span class="option-name">egrep</span>
-                                                <span class="option-desc">(ERE)</span>
-                                            </div>
-                                            <div class="dropdown-option" data-value="vim">
-                                                <span class="option-name">Vim</span>
-                                                <span class="option-desc">(Vi/Vim regex)</span>
-                                            </div>
-                                            <div class="dropdown-option" data-value="python">
-                                                <span class="option-name">Python</span>
-                                                <span class="option-desc">(re module)</span>
-                                            </div>
-                                            <div class="dropdown-option" data-value="sed">
-                                                <span class="option-name">sed</span>
-                                                <span class="option-desc">(Stream editor)</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <input type="hidden" id="regex-mode" value="javascript">
-                                    <span class="mode-info" id="mode-info" title="Mode information">i</span>
-                                </div>
-                            </div>
-                        </div>
+                // Test regex on page load
+                this.testRegex();
+            }
+
+            testRegex() {
+                const pattern = this.regexInput.value.trim();
+                const flags = this.flagsInput.value.trim();
+                const text = this.testText.value;
+
+                // Clear previous results
+                this.highlightedText.className = 'highlighted-text';
+                
+                if (!pattern) {
+                    this.showPlaceholder();
+                    return;
+                }
+
+                if (!text) {
+                    this.showNoText();
+                    return;
+                }
+
+                try {
+                    const regex = new RegExp(pattern, flags);
+                    this.highlightMatches(text, regex);
+                } catch (error) {
+                    this.showError(error.message);
+                }
+            }
+
+            highlightMatches(text, regex) {
+                const matches = [];
+                let match;
+
+                if (regex.global) {
+                    while ((match = regex.exec(text)) !== null) {
+                        matches.push({
+                            text: match[0],
+                            start: match.index,
+                            end: match.index + match[0].length
+                        });
                         
-                        <div class="regex-input-wrapper">
-                            <div class="regex-input-container">
-                                <span class="regex-delimiter">/</span>
-                                <input type="text" id="regex-input" placeholder="Enter your regex pattern" autocomplete="off" spellcheck="false">
-                                <span class="regex-delimiter">/</span>
-                                <input type="text" id="regex-flags" placeholder="gimsu" maxlength="10" autocomplete="off" spellcheck="false">
-                                <span class="flags-info" id="flags-info" title="Flag information">?</span>
-                            </div>
-                        </div>
-                        <div id="regex-error" class="error-message"></div>
-                        
-                        <!-- Pattern Explanation Panel -->
-                        <div id="pattern-explanation-container"></div>
-                    </div>
-                    
-                    <!-- Test String Section -->
-                    <div class="test-section">
-                        <div class="test-header">
-                            <h2 class="section-title">Test String</h2>
-                            <div class="test-actions">
-                                <button class="icon-button small" id="load-sample" title="Load sample text">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                        <polyline points="14 2 14 8 20 8"/>
-                                        <line x1="16" y1="13" x2="8" y2="13"/>
-                                        <line x1="16" y1="17" x2="8" y2="17"/>
-                                        <polyline points="10 9 8 9 8 21"/>
-                                    </svg>
-                                </button>
-                                <button class="icon-button small" id="clear-test" title="Clear test string">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polyline points="3 6 5 6 21 6"/>
-                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="textarea-container">
-                            <textarea id="test-input" placeholder="Enter your test string here..." spellcheck="false"></textarea>
-                            <div id="highlighted-text" class="highlighted-overlay"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Results Section -->
-                    <div class="results-section">
-                        <div class="match-stats">
-                            <div id="match-count" class="match-count">No matches found</div>
-                            <div id="match-performance" class="match-performance"></div>
-                        </div>
-                        <div id="match-details" class="match-details"></div>
-                    </div>
-                </div>
-                
-                <!-- Replacement Preview Section -->
-                <div id="replacement-section-container"></div>
-                
-                <!-- Status Bar -->
-                <div class="status-bar">
-                    <div class="status-item">
-                        <span class="status-indicator"></span>
-                        <span>Ready</span>
-                    </div>
-                    <div class="status-item">
-                        <span id="char-count">0 chars</span>
-                    </div>
-                    <div class="status-item">
-                        <span id="current-mode">JavaScript</span>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
+                        // Prevent infinite loop on empty matches
+                        if (match[0].length === 0) {
+                            regex.lastIndex++;
+                        }
+                    }
+                } else {
+                    match = regex.exec(text);
+                    if (match) {
+                        matches.push({
+                            text: match[0],
+                            start: match.index,
+                            end: match.index + match[0].length
+                        });
+                    }
+                }
 
-    <!-- Modal for mode info -->
-    <div id="modal-overlay" class="modal-overlay">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modal-title">Regex Mode Information</h3>
-                <button class="modal-close" id="modal-close">&times;</button>
-            </div>
-            <div class="modal-content" id="modal-content"></div>
-        </div>
-    </div>
-    
-    <!-- Help Panel -->
-    <div class="help-panel" id="help-panel">
-        <div class="help-panel-header">
-            <h3>Documentation</h3>
-            <button class="icon-button" id="close-help">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <line x1="18" y1="6" x2="6" y2="18"/>
-                    <line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-            </button>
-        </div>
-        <div class="help-panel-content">
-            <div class="help-tabs" id="help-tabs">
-                <!-- Tabs will be generated dynamically -->
-            </div>
-            <div class="help-tab-content" id="help-tab-content">
-                <!-- Content will be generated dynamically based on selected mode -->
-            </div>
-        </div>
-    </div>
-    
-    <!-- Keyboard Shortcuts Modal -->
-    <div class="shortcuts-modal" id="shortcuts-modal">
-        <h3 class="shortcuts-title">Keyboard Shortcuts</h3>
-        <div class="shortcut-group">
-            <h4>General</h4>
-            <div class="shortcut-item">
-                <span class="shortcut-description">Show keyboard shortcuts</span>
-                <div class="shortcut-keys">
-                    <span class="key">Ctrl</span>
-                    <span class="key">/</span>
-                </div>
-            </div>
-            <div class="shortcut-item">
-                <span class="shortcut-description">Show help panel</span>
-                <div class="shortcut-keys">
-                    <span class="key">F1</span>
-                </div>
-            </div>
-            <div class="shortcut-item">
-                <span class="shortcut-description">Focus pattern input</span>
-                <div class="shortcut-keys">
-                    <span class="key">Ctrl</span>
-                    <span class="key">P</span>
-                </div>
-            </div>
-            <div class="shortcut-item">
-                <span class="shortcut-description">Focus test string</span>
-                <div class="shortcut-keys">
-                    <span class="key">Ctrl</span>
-                    <span class="key">T</span>
-                </div>
-            </div>
-        </div>
-        <div class="shortcut-group">
-            <h4>Pattern Actions</h4>
-            <div class="shortcut-item">
-                <span class="shortcut-description">Clear pattern</span>
-                <div class="shortcut-keys">
-                    <span class="key">Ctrl</span>
-                    <span class="key">Shift</span>
-                    <span class="key">C</span>
-                </div>
-            </div>
-            <div class="shortcut-item">
-                <span class="shortcut-description">Export pattern</span>
-                <div class="shortcut-keys">
-                    <span class="key">Ctrl</span>
-                    <span class="key">E</span>
-                </div>
-            </div>
-            <div class="shortcut-item">
-                <span class="shortcut-description">Share pattern</span>
-                <div class="shortcut-keys">
-                    <span class="key">Ctrl</span>
-                    <span class="key">S</span>
-                </div>
-            </div>
-        </div>
-        <div class="shortcut-group">
-            <h4>Navigation</h4>
-            <div class="shortcut-item">
-                <span class="shortcut-description">Next match</span>
-                <div class="shortcut-keys">
-                    <span class="key">F3</span>
-                </div>
-            </div>
-            <div class="shortcut-item">
-                <span class="shortcut-description">Previous match</span>
-                <div class="shortcut-keys">
-                    <span class="key">Shift</span>
-                    <span class="key">F3</span>
-                </div>
-            </div>
-        </div>
-        <button class="action-button" id="close-shortcuts">Close</button>
-    </div>
+                this.displayResults(text, matches);
+            }
 
-    <script src="mode-help.js"></script>
-    <script src="regex-parser.js"></script>
-    <script src="syntax-highlighter.js"></script>
-    <script src="pattern-explainer.js"></script>
-    <script src="enhanced-tooltips.js"></script>
-    <script src="replacement-preview.js"></script>
-    <script src="cyber-patterns.js"></script>
-    <script src="enhanced-pattern-library.js"></script>
-    <script src="keyboard-shortcuts.js"></script>
-    <script src="app.js"></script>
+            displayResults(text, matches) {
+                this.updateMatchCount(matches.length);
+
+                if (matches.length === 0) {
+                    this.highlightedText.textContent = text;
+                    return;
+                }
+
+                // Sort matches by start position
+                matches.sort((a, b) => a.start - b.start);
+
+                let highlightedHtml = '';
+                let lastIndex = 0;
+
+                matches.forEach(match => {
+                    // Add text before the match
+                    highlightedHtml += this.escapeHtml(text.slice(lastIndex, match.start));
+                    
+                    // Add the highlighted match
+                    highlightedHtml += `<span class="highlight">${this.escapeHtml(match.text)}</span>`;
+                    
+                    lastIndex = match.end;
+                });
+
+                // Add remaining text after the last match
+                highlightedHtml += this.escapeHtml(text.slice(lastIndex));
+
+                this.highlightedText.innerHTML = highlightedHtml;
+            }
+
+            updateMatchCount(count) {
+                const text = count === 1 ? '1 match' : `${count} matches`;
+                this.matchCount.textContent = text;
+            }
+
+            showPlaceholder() {
+                this.highlightedText.textContent = 'Enter a regex pattern and test text to see matches highlighted here.';
+                this.matchCount.textContent = '0 matches';
+            }
+
+            showNoText() {
+                this.highlightedText.textContent = 'Enter some test text to see matches.';
+                this.matchCount.textContent = '0 matches';
+            }
+
+            showError(message) {
+                this.highlightedText.className = 'highlighted-text error';
+                this.highlightedText.textContent = `Error: ${message}`;
+                this.matchCount.textContent = 'Error';
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        }
+
+        // Initialize the regex tester when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new SimpleRegexTester();
+        });
+    </script>
 </body>
 </html>
