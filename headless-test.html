@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Headless Test Runner</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #00ff00; }
+        iframe { width: 100%; height: 600px; border: 2px solid #00ff00; }
+        #results { margin-top: 20px; white-space: pre-wrap; }
+        .pass { color: #00ff00; }
+        .fail { color: #ff0000; }
+        .info { color: #ffff00; }
+    </style>
+</head>
+<body>
+    <h1>RegexPro Headless Test Runner</h1>
+    <iframe id="testFrame" src="/"></iframe>
+    <div id="results">Loading application...</div>
+
+    <script>
+        const results = document.getElementById('results');
+        const frame = document.getElementById('testFrame');
+        
+        function log(msg, type = 'info') {
+            const span = document.createElement('span');
+            span.className = type;
+            span.textContent = msg + '\n';
+            results.appendChild(span);
+        }
+        
+        frame.onload = async function() {
+            results.innerHTML = '';
+            log('🚀 Application loaded, starting tests...', 'info');
+            
+            const win = frame.contentWindow;
+            const doc = frame.contentDocument;
+            
+            // Test 1: Check for JavaScript errors
+            log('\n📋 TEST 1: JavaScript Errors');
+            const errors = win.console._errors || [];
+            if (errors.length === 0) {
+                log('✅ No JavaScript errors detected', 'pass');
+            } else {
+                log(`❌ ${errors.length} JavaScript errors found`, 'fail');
+                errors.forEach(err => log(`  - ${err}`, 'fail'));
+            }
+            
+            // Test 2: Check critical objects
+            log('\n📋 TEST 2: Object Initialization');
+            const objects = {
+                'RegexTester': win.RegexTester,
+                'regexTester': win.regexTester,
+                'CyberPatterns': win.CyberPatterns,
+                'enhancedPatternLibrary': win.enhancedPatternLibrary,
+                'keyboardShortcuts': win.keyboardShortcuts
+            };
+            
+            for (const [name, obj] of Object.entries(objects)) {
+                if (obj !== undefined) {
+                    log(`✅ ${name} initialized`, 'pass');
+                } else {
+                    log(`❌ ${name} is undefined`, 'fail');
+                }
+            }
+            
+            // Test 3: DOM Elements
+            log('\n📋 TEST 3: Critical DOM Elements');
+            const elements = [
+                { id: 'regex-input', name: 'Regex Input' },
+                { id: 'test-input', name: 'Test Input' },
+                { id: 'pattern-library-container', name: 'Pattern Library' },
+                { id: 'theme-dropdown', name: 'Theme Dropdown' },
+                { id: 'help-panel', name: 'Help Panel' },
+                { id: 'shortcuts-modal', name: 'Shortcuts Modal' }
+            ];
+            
+            elements.forEach(el => {
+                const element = doc.getElementById(el.id);
+                if (element) {
+                    log(`✅ ${el.name} found`, 'pass');
+                } else {
+                    log(`❌ ${el.name} (#${el.id}) missing`, 'fail');
+                }
+            });
+            
+            // Test 4: Pattern Library
+            log('\n📋 TEST 4: Pattern Library');
+            const categories = doc.querySelectorAll('.category-chip');
+            log(`Found ${categories.length} pattern categories`, categories.length === 7 ? 'pass' : 'fail');
+            
+            const patterns = doc.querySelectorAll('.pattern-card');
+            log(`Found ${patterns.length} patterns loaded`, patterns.length > 0 ? 'pass' : 'fail');
+            
+            // Test 5: Basic Functionality
+            log('\n📋 TEST 5: Basic Regex Functionality');
+            const regexInput = doc.getElementById('regex-input');
+            const testInput = doc.getElementById('test-input');
+            
+            if (regexInput && testInput) {
+                // Set a pattern
+                regexInput.value = '\\d+';
+                regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+                
+                testInput.value = 'Test 123 and 456';
+                testInput.dispatchEvent(new Event('input', { bubbles: true }));
+                
+                // Wait for processing
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                const matches = doc.querySelectorAll('mark.highlight');
+                log(`Found ${matches.length} matches (expected 2)`, matches.length === 2 ? 'pass' : 'fail');
+                
+                const matchCount = doc.getElementById('match-count');
+                if (matchCount) {
+                    log(`Match count text: "${matchCount.textContent}"`, 'info');
+                }
+            } else {
+                log('❌ Could not test - inputs missing', 'fail');
+            }
+            
+            // Test 6: Theme
+            log('\n📋 TEST 6: Theme System');
+            const themeLink = doc.getElementById('theme-stylesheet');
+            if (themeLink) {
+                const currentTheme = themeLink.href.split('/').pop();
+                log(`Current theme: ${currentTheme}`, currentTheme === 'cyber-pro.css' ? 'pass' : 'fail');
+            } else {
+                log('❌ Theme stylesheet not found', 'fail');
+            }
+            
+            // Test 7: Check for specific issues
+            log('\n📋 TEST 7: Known Issues Check');
+            
+            // Check help button
+            const helpButton = doc.getElementById('help-button');
+            const helpToggle = doc.getElementById('help-toggle');
+            if (helpButton && !helpToggle) {
+                log('✅ Help button ID fixed (using help-button)', 'pass');
+            } else if (helpToggle) {
+                log('❌ Old help-toggle ID still in use', 'fail');
+            }
+            
+            // Summary
+            log('\n📊 TEST SUMMARY', 'info');
+            const passCount = results.querySelectorAll('.pass').length;
+            const failCount = results.querySelectorAll('.fail').length;
+            const total = passCount + failCount;
+            const passRate = total > 0 ? ((passCount / total) * 100).toFixed(1) : 0;
+            
+            log(`Passed: ${passCount}`, 'pass');
+            log(`Failed: ${failCount}`, 'fail');
+            log(`Pass Rate: ${passRate}%`, 'info');
+            
+            if (failCount === 0) {
+                log('\n✨ All tests passed! Application is working correctly.', 'pass');
+            } else {
+                log('\n⚠️ Some tests failed. Check details above.', 'fail');
+            }
+        };
+        
+        // Capture console errors from iframe
+        frame.addEventListener('load', () => {
+            const win = frame.contentWindow;
+            win.console._errors = [];
+            const originalError = win.console.error;
+            win.console.error = function(...args) {
+                win.console._errors.push(args.join(' '));
+                originalError.apply(win.console, args);
+            };
+        });
+    </script>
+</body>
+</html>

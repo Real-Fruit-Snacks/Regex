@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RegexPro Manual Test Checklist</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 { color: #2c3e50; }
+        h2 { color: #34495e; margin-top: 30px; }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 3px solid #e0e0e0;
+        }
+        .test-item:hover {
+            background: #f8f9fa;
+        }
+        input[type="checkbox"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+        .status {
+            float: right;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .pass { background: #27ae60; color: white; }
+        .fail { background: #e74c3c; color: white; }
+        .skip { background: #95a5a6; color: white; }
+        code {
+            background: #ecf0f1;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .results {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .action {
+            color: #3498db;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 RegexPro Manual Test Checklist</h1>
+    <p>Open <a href="http://localhost:8080" target="_blank">RegexPro Application</a> in a new tab and go through each test.</p>
+    
+    <div class="results">
+        <h3>Progress</h3>
+        <div id="progress">0 / 0 completed</div>
+    </div>
+
+    <div class="test-section">
+        <h2>1. Initial Load & UI</h2>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">CHECK:</span> Page loads without console errors (F12 → Console)</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">VERIFY:</span> Cyber Pro theme is active (dark background with green accents)</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">VERIFY:</span> Sidebar shows pattern library with categories</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">VERIFY:</span> Status bar shows at bottom with "Ready" indicator</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Pattern Library</h2>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">CLICK:</span> "Network" category → Shows network-related patterns</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">CLICK:</span> Any pattern card → Pattern loads in regex input</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">TYPE:</span> "hash" in search box → Filters to hash patterns</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">VERIFY:</span> Pattern count updates when switching categories</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Regex Testing</h2>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">CLICK:</span> IPv4 pattern from sidebar</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">TYPE:</span> Test string: <code>Server IPs: 192.168.1.1 and 10.0.0.5</code></label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">VERIFY:</span> Both IP addresses are highlighted in green</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">VERIFY:</span> Match count shows "2 matches found"</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">VERIFY:</span> Match details show both matches below</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Keyboard Shortcuts</h2>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">PRESS:</span> <code>Ctrl+/</code> → Shortcuts modal appears</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">PRESS:</span> <code>ESC</code> → Modal closes</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">PRESS:</span> <code>F1</code> → Help panel slides in from right</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">PRESS:</span> <code>Ctrl+P</code> → Focus moves to pattern input</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">PRESS:</span> <code>Ctrl+T</code> → Focus moves to test string</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Mode Switching</h2>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">CLICK:</span> Mode dropdown → Shows all regex modes</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">SELECT:</span> "Python" mode → Status bar updates to show "Python"</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">CLICK:</span> Mode info (i) button → Shows mode information modal</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>6. Theme System</h2>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">CLICK:</span> Theme dropdown → Shows all 15 themes</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">SELECT:</span> "Dracula" theme → UI changes to Dracula colors</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">REFRESH:</span> Page → Theme persists after reload</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">SELECT:</span> "Cyber Pro" theme → Return to default theme</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>7. Sample Data & Actions</h2>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">CLICK:</span> Document icon in test section → Loads sample data</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">VERIFY:</span> Character count updates in status bar</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">CLICK:</span> Trash icon → Clears test string</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>8. Export & Share</h2>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">ENTER:</span> Pattern <code>\d+</code> and test string <code>123</code></label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">CLICK:</span> "Export Pattern" → Downloads JSON file</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">CLICK:</span> "Share Pattern" → Shows "Copied!" confirmation</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>9. Recent Patterns</h2>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">USE:</span> Several patterns from library</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">VERIFY:</span> Recent patterns section updates</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">CLICK:</span> Recent pattern → Loads into input</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">CLICK:</span> Clear recent (X) → Confirms and clears list</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>10. Responsive Design</h2>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">RESIZE:</span> Browser to mobile width → Layout adapts properly</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">VERIFY:</span> Sidebar hidden on mobile</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">VERIFY:</span> All features still accessible</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>11. Error Handling</h2>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">ENTER:</span> Invalid pattern <code>[</code> → Shows error message</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">ENTER:</span> Invalid flags <code>xyz</code> → Shows warning</label>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>12. Performance</h2>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">PASTE:</span> Large text (1000+ lines) → Handles smoothly</label>
+        </div>
+        <div class="test-item">
+            <label><input type="checkbox"> <span class="action">VERIFY:</span> Scrolling syncs between input and highlights</label>
+        </div>
+    </div>
+
+    <script>
+        // Update progress counter
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        const progressDiv = document.getElementById('progress');
+        
+        function updateProgress() {
+            const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+            const total = checkboxes.length;
+            progressDiv.textContent = `${checked} / ${total} completed`;
+            
+            // Color code progress
+            const percent = (checked / total) * 100;
+            if (percent === 100) {
+                progressDiv.style.color = '#27ae60';
+            } else if (percent >= 80) {
+                progressDiv.style.color = '#f39c12';
+            } else {
+                progressDiv.style.color = '#34495e';
+            }
+        }
+        
+        checkboxes.forEach(cb => {
+            cb.addEventListener('change', updateProgress);
+        });
+        
+        updateProgress();
+        
+        // Save state to localStorage
+        window.addEventListener('beforeunload', () => {
+            const state = {};
+            checkboxes.forEach((cb, index) => {
+                state[index] = cb.checked;
+            });
+            localStorage.setItem('regexpro-test-state', JSON.stringify(state));
+        });
+        
+        // Restore state
+        const savedState = localStorage.getItem('regexpro-test-state');
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            checkboxes.forEach((cb, index) => {
+                if (state[index]) {
+                    cb.checked = true;
+                }
+            });
+            updateProgress();
+        }
+    </script>
+</body>
+</html>

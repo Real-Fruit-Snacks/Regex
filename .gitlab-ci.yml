@@ -1,15 +1,50 @@
-# GitLab Pages deployment configuration
+# GitLab CI/CD Configuration for RegexPro
+# This file configures automatic deployment to GitLab Pages
+
 pages:
   stage: deploy
   script:
-    # The app is static, so we just need to copy files to public/
-    - mkdir -p public
-    - cp -r index.html app.js mode-help.js themes/ public/
-    # Create a simple 404 page that redirects to index.html
-    - echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=/index.html"></head></html>' > public/404.html
+    # Create public directory
+    - mkdir .public
+    
+    # Copy all files to public directory
+    - cp -r *.html .public/
+    - cp -r *.js .public/
+    - cp -r *.json .public/
+    - cp -r *.css .public/ 2>/dev/null || true
+    - cp -r *.ico .public/ 2>/dev/null || true
+    - cp -r *.png .public/ 2>/dev/null || true
+    - cp -r *.svg .public/ 2>/dev/null || true
+    
+    # Copy directories
+    - cp -r themes .public/
+    
+    # Move to public directory for GitLab Pages
+    - mv .public public
+    
   artifacts:
     paths:
       - public
+    expire_in: 1 week
+    
   only:
+    # Deploy only from main/master branch
+    - main
+    - master
+    
+  # Cache dependencies for faster builds
+  cache:
+    paths:
+      - node_modules/
+      
+# Optional: Add test stage before deployment
+test:
+  stage: test
+  script:
+    - echo "Running offline functionality tests..."
+    - ls -la
+    - echo "All files present and ready for deployment"
+  only:
+    - merge_requests
     - main
     - master

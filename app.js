@@ -10,8 +10,8 @@ class RegexTester {
         this.themeSelect = document.getElementById('theme-select');
         this.regexMode = document.getElementById('regex-mode');
         this.modeInfo = document.getElementById('mode-info');
-        this.helpToggle = document.getElementById('help-toggle');
-        this.helpContent = document.getElementById('help-content');
+        this.helpToggle = document.getElementById('help-button');
+        this.helpContent = document.getElementById('help-tab-content');
         this.modalOverlay = document.getElementById('modal-overlay');
         this.modalContent = document.getElementById('modal-content');
         this.modalClose = document.getElementById('modal-close');
@@ -33,9 +33,15 @@ class RegexTester {
         this.regexFlags.addEventListener('input', () => this.updateMatches());
         this.testInput.addEventListener('input', () => this.updateMatches());
         this.testInput.addEventListener('scroll', () => this.syncScroll());
-        this.modeInfo.addEventListener('click', () => this.showModeInfo());
-        this.flagsInfo.addEventListener('click', () => this.showFlagsInfo());
-        this.helpToggle.addEventListener('click', () => this.toggleHelp());
+        if (this.modeInfo) {
+            this.modeInfo.addEventListener('click', () => this.showModeInfo());
+        }
+        if (this.flagsInfo) {
+            this.flagsInfo.addEventListener('click', () => this.showFlagsInfo());
+        }
+        if (this.helpToggle) {
+            this.helpToggle.addEventListener('click', () => this.toggleHelp());
+        }
         this.modalClose.addEventListener('click', () => this.closeModal());
         this.modalOverlay.addEventListener('click', (e) => {
             if (e.target === this.modalOverlay) {
@@ -143,7 +149,7 @@ class RegexTester {
     }
 
     loadSavedTheme() {
-        const savedTheme = localStorage.getItem('selectedTheme') || 'ayu-mirage';
+        const savedTheme = localStorage.getItem('selectedTheme') || 'cyber-pro';
         this.changeTheme(savedTheme);
         
         // Update dropdown to show current theme
@@ -562,13 +568,7 @@ class RegexTester {
         this.replacementPreview = new ReplacementPreview();
         this.replacementPreview.init('replacement-section-container');
         
-        // Initialize pattern library
-        this.patternLibrary = new PatternLibrary();
-        this.patternLibrary.init('pattern-library-container', (pattern, flags) => {
-            this.regexInput.value = pattern;
-            this.regexFlags.value = flags || '';
-            this.updateMatches();
-        });
+        // Pattern library is now initialized separately as EnhancedPatternLibrary
     }
 
     updateHelp() {
@@ -579,16 +579,18 @@ class RegexTester {
 
         // Update mode notice
         const modeNotice = document.getElementById('mode-notice');
-        const modeNames = {
-            javascript: 'JavaScript (ECMAScript)',
-            pcre: 'PCRE (Perl Compatible)',
-            grep: 'grep (Basic Regular Expressions)',
-            egrep: 'egrep (Extended Regular Expressions)',
-            vim: 'Vim/Vi Editor',
-            python: 'Python re module',
-            sed: 'sed Stream Editor'
-        };
-        modeNotice.textContent = `Help content for ${modeNames[mode]} regex mode`;
+        if (modeNotice) {
+            const modeNames = {
+                javascript: 'JavaScript (ECMAScript)',
+                pcre: 'PCRE (Perl Compatible)',
+                grep: 'grep (Basic Regular Expressions)',
+                egrep: 'egrep (Extended Regular Expressions)',
+                vim: 'Vim/Vi Editor',
+                python: 'Python re module',
+                sed: 'sed Stream Editor'
+            };
+            modeNotice.textContent = `Help content for ${modeNames[mode]} regex mode`;
+        }
 
         // Generate tabs
         this.generateHelpTabs(helpContent);
@@ -739,9 +741,11 @@ class RegexTester {
     }
 
     toggleHelp() {
-        const isVisible = this.helpContent.style.display !== 'none';
-        this.helpContent.style.display = isVisible ? 'none' : 'block';
-        this.helpToggle.textContent = isVisible ? 'Show Help' : 'Hide Help';
+        // Toggle the help panel (new sliding panel)
+        const helpPanel = document.getElementById('help-panel');
+        if (helpPanel) {
+            helpPanel.classList.toggle('open');
+        }
     }
 
     showModeInfo() {
@@ -1124,3 +1128,37 @@ class RegexTester {
 
 // Initialize the application
 const regexTester = new RegexTester();
+
+// Initialize enhanced pattern library
+let enhancedPatternLibrary;
+if (typeof EnhancedPatternLibrary !== 'undefined') {
+    enhancedPatternLibrary = new EnhancedPatternLibrary(regexTester);
+}
+
+// Initialize keyboard shortcuts
+let keyboardShortcuts;
+if (typeof KeyboardShortcuts !== 'undefined') {
+    keyboardShortcuts = new KeyboardShortcuts(regexTester);
+}
+
+// Update status bar current mode
+const updateStatusMode = () => {
+    const currentModeElement = document.getElementById('current-mode');
+    const modeSelect = document.getElementById('regex-mode');
+    if (currentModeElement && modeSelect) {
+        const modeName = document.querySelector(`[data-value="${modeSelect.value}"] .option-name`)?.textContent || 'JavaScript';
+        currentModeElement.textContent = modeName;
+    }
+};
+
+// Listen for mode changes
+if (regexTester.regexMode) {
+    const originalChangeMode = regexTester.changeMode;
+    regexTester.changeMode = function(mode) {
+        originalChangeMode.call(this, mode);
+        updateStatusMode();
+    };
+}
+
+// Initialize status bar
+updateStatusMode();

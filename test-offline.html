@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RegexPro - Offline Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #0a0e1b;
+            color: #e4e7ed;
+        }
+        h1 {
+            color: #00ff41;
+        }
+        .test-item {
+            margin: 20px 0;
+            padding: 15px;
+            background: #161c2d;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .status {
+            font-weight: bold;
+        }
+        .pass { color: #00ff41; }
+        .fail { color: #ff3e3e; }
+        .info { color: #00b8ff; }
+        code {
+            background: #0f1420;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>RegexPro Offline Functionality Test</h1>
+    
+    <div class="test-item">
+        <h3>Test 1: Application Load</h3>
+        <p>Testing if the main application loads properly...</p>
+        <div id="app-test"></div>
+    </div>
+    
+    <div class="test-item">
+        <h3>Test 2: Resource Loading</h3>
+        <p>Checking all required resources...</p>
+        <div id="resource-test"></div>
+    </div>
+    
+    <div class="test-item">
+        <h3>Test 3: GitLab Pages Compatibility</h3>
+        <p>Verifying relative paths and static hosting compatibility...</p>
+        <div id="gitlab-test"></div>
+    </div>
+    
+    <div class="test-item">
+        <h3>Test 4: Offline Storage</h3>
+        <p>Testing localStorage functionality...</p>
+        <div id="storage-test"></div>
+    </div>
+    
+    <div class="test-item">
+        <h3>Instructions for GitLab Pages Deployment</h3>
+        <ol>
+            <li>Create a <code>.gitlab-ci.yml</code> file in your repository root</li>
+            <li>Add the following configuration:
+                <pre><code>pages:
+  stage: deploy
+  script:
+    - mkdir .public
+    - cp -r * .public
+    - mv .public public
+  artifacts:
+    paths:
+      - public
+  only:
+    - main</code></pre>
+            </li>
+            <li>Push to GitLab and the app will be available at <code>https://username.gitlab.io/repository-name/</code></li>
+        </ol>
+    </div>
+    
+    <script>
+        // Test 1: Application Load
+        async function testAppLoad() {
+            const test = document.getElementById('app-test');
+            try {
+                const response = await fetch('index.html');
+                if (response.ok) {
+                    test.innerHTML = '<span class="status pass">✓ PASS</span> - Main application file loads successfully';
+                } else {
+                    test.innerHTML = '<span class="status fail">✗ FAIL</span> - Failed to load index.html';
+                }
+            } catch (e) {
+                test.innerHTML = '<span class="status fail">✗ FAIL</span> - ' + e.message;
+            }
+        }
+        
+        // Test 2: Resource Loading
+        async function testResources() {
+            const test = document.getElementById('resource-test');
+            const resources = [
+                'themes/cyber-pro.css',
+                'app.js',
+                'cyber-patterns.js',
+                'enhanced-pattern-library.js',
+                'keyboard-shortcuts.js',
+                'manifest.json'
+            ];
+            
+            let results = [];
+            for (const resource of resources) {
+                try {
+                    const response = await fetch(resource);
+                    results.push({
+                        file: resource,
+                        status: response.ok
+                    });
+                } catch (e) {
+                    results.push({
+                        file: resource,
+                        status: false
+                    });
+                }
+            }
+            
+            const failed = results.filter(r => !r.status);
+            if (failed.length === 0) {
+                test.innerHTML = '<span class="status pass">✓ PASS</span> - All resources load successfully';
+            } else {
+                test.innerHTML = '<span class="status fail">✗ FAIL</span> - Failed to load: ' + 
+                    failed.map(f => f.file).join(', ');
+            }
+        }
+        
+        // Test 3: GitLab Pages Compatibility
+        function testGitLabCompatibility() {
+            const test = document.getElementById('gitlab-test');
+            const checks = [];
+            
+            // Check for absolute paths
+            const hasAbsolutePaths = document.querySelector('link[href^="/"]') || 
+                                   document.querySelector('script[src^="/"]');
+            if (!hasAbsolutePaths) {
+                checks.push('<span class="status pass">✓</span> No absolute paths detected');
+            } else {
+                checks.push('<span class="status fail">✗</span> Absolute paths found (may cause issues)');
+            }
+            
+            // Check for external dependencies
+            const externalDeps = document.querySelectorAll('link[href*="//"], script[src*="//"]');
+            if (externalDeps.length <= 1) { // Allow Google Fonts
+                checks.push('<span class="status pass">✓</span> Minimal external dependencies');
+            } else {
+                checks.push('<span class="status info">ℹ</span> Multiple external dependencies detected');
+            }
+            
+            test.innerHTML = checks.join('<br>');
+        }
+        
+        // Test 4: Offline Storage
+        function testStorage() {
+            const test = document.getElementById('storage-test');
+            try {
+                localStorage.setItem('test', 'value');
+                const value = localStorage.getItem('test');
+                localStorage.removeItem('test');
+                
+                if (value === 'value') {
+                    test.innerHTML = '<span class="status pass">✓ PASS</span> - localStorage is working';
+                } else {
+                    test.innerHTML = '<span class="status fail">✗ FAIL</span> - localStorage read/write failed';
+                }
+            } catch (e) {
+                test.innerHTML = '<span class="status fail">✗ FAIL</span> - localStorage not available: ' + e.message;
+            }
+        }
+        
+        // Run all tests
+        window.addEventListener('load', () => {
+            testAppLoad();
+            testResources();
+            testGitLabCompatibility();
+            testStorage();
+        });
+    </script>
+</body>
+</html>
