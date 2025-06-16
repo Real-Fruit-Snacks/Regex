@@ -315,19 +315,26 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
         const mode = params.get('mode');
         const test = params.get('test');
         
+        // Validate and sanitize URL parameters
         if (pattern) {
-            const regexInput = document.getElementById('regex-input');
-            if (regexInput) {
-                regexInput.value = pattern;
-                regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+            const sanitizedPattern = this.sanitizeURLParam(pattern);
+            if (sanitizedPattern && this.isValidRegexPattern(sanitizedPattern)) {
+                const regexInput = document.getElementById('regex-input');
+                if (regexInput) {
+                    regexInput.value = sanitizedPattern;
+                    regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
             }
         }
         
         if (flags) {
-            const flagsInput = document.getElementById('regex-flags');
-            if (flagsInput) {
-                flagsInput.value = flags;
-                flagsInput.dispatchEvent(new Event('input', { bubbles: true }));
+            const sanitizedFlags = this.sanitizeURLParam(flags);
+            if (sanitizedFlags && this.isValidFlags(sanitizedFlags)) {
+                const flagsInput = document.getElementById('regex-flags');
+                if (flagsInput) {
+                    flagsInput.value = sanitizedFlags;
+                    flagsInput.dispatchEvent(new Event('input', { bubbles: true }));
+                }
             }
         }
         
@@ -342,6 +349,80 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`
                 testInput.dispatchEvent(new Event('input', { bubbles: true }));
             }
         }
+    }
+
+    // Cleanup method for memory management
+    cleanup() {
+        // Remove document-level event listeners
+        if (this.keydownHandler) {
+            document.removeEventListener('keydown', this.keydownHandler);
+        }
+        if (this.keyupHandler) {
+            document.removeEventListener('keyup', this.keyupHandler);
+        }
+        
+        // Clear references
+        this.regexTester = null;
+        this.shortcuts = null;
+        this.modifierKeys = null;
+        
+        console.log('KeyboardShortcuts cleanup completed');
+    }
+
+    // Security validation methods
+    sanitizeURLParam(param) {
+        if (typeof param !== 'string') {
+            return '';
+        }
+        
+        // Remove any HTML tags and scripts
+        const stripHtml = param.replace(/<[^>]*>/g, '');
+        
+        // Remove javascript: protocols and other dangerous content
+        const stripDangerous = stripHtml.replace(/javascript:/gi, '')
+                                        .replace(/data:/gi, '')
+                                        .replace(/vbscript:/gi, '');
+        
+        // Decode URI component safely
+        try {
+            return decodeURIComponent(stripDangerous);
+        } catch (e) {
+            return stripDangerous;
+        }
+    }
+
+    isValidRegexPattern(pattern) {
+        if (typeof pattern !== 'string' || pattern.length > 1000) {
+            return false;
+        }
+        
+        // Check for dangerous patterns
+        const dangerousPatterns = [
+            /javascript:/i,
+            /<script/i,
+            /on\w+=/i,
+            /eval\(/i,
+            /document\./i,
+            /window\./i
+        ];
+        
+        for (const dangerous of dangerousPatterns) {
+            if (dangerous.test(pattern)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    isValidFlags(flags) {
+        if (typeof flags !== 'string') {
+            return false;
+        }
+        
+        // Only allow valid regex flags
+        const validFlags = /^[gimsuvy]*$/;
+        return validFlags.test(flags) && flags.length <= 10;
     }
 }
 

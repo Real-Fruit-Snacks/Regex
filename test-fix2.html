@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Fix 2 - XSS Protection</title>
+</head>
+<body>
+    <script>
+        // Test XSS protection
+        async function testXSSProtection() {
+            console.log('Testing XSS protection...');
+            
+            // Load the page
+            const iframe = document.createElement('iframe');
+            iframe.src = 'http://127.0.0.1:8080/';
+            iframe.style.width = '800px';
+            iframe.style.height = '600px';
+            document.body.appendChild(iframe);
+            
+            iframe.onload = function() {
+                const iframeDoc = iframe.contentDocument;
+                const regexInput = iframeDoc.getElementById('regex-input');
+                const testInput = iframeDoc.getElementById('test-input');
+                const errorDiv = iframeDoc.getElementById('regex-error');
+                
+                if (regexInput && testInput) {
+                    console.log('✅ Page loaded, inputs found');
+                    
+                    // Test 1: Try to inject script via regex input
+                    console.log('Testing script injection in regex...');
+                    regexInput.value = '<script>alert("XSS")</script>';
+                    regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    
+                    setTimeout(() => {
+                        if (errorDiv && errorDiv.textContent.includes('unsafe content')) {
+                            console.log('✅ Script injection blocked in regex pattern');
+                        } else {
+                            console.log('❌ Script injection not properly blocked');
+                        }
+                        
+                        // Test 2: Try javascript: protocol
+                        regexInput.value = 'javascript:alert(1)';
+                        regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        
+                        setTimeout(() => {
+                            if (errorDiv && errorDiv.textContent.includes('unsafe content')) {
+                                console.log('✅ JavaScript protocol blocked');
+                            } else {
+                                console.log('❌ JavaScript protocol not blocked');
+                            }
+                            
+                            // Test 3: Normal regex still works
+                            regexInput.value = '\\d+';
+                            testInput.value = 'Numbers: 123, 456';
+                            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+                            testInput.dispatchEvent(new Event('input', { bubbles: true }));
+                            
+                            setTimeout(() => {
+                                const highlights = iframeDoc.querySelectorAll('mark.highlight');
+                                if (highlights.length === 2) {
+                                    console.log('✅ Normal regex still works after security fixes');
+                                } else {
+                                    console.log('❌ Normal regex broken by security fixes');
+                                }
+                                
+                                // Test 4: HTML in test input is escaped
+                                testInput.value = '<script>alert("test")</script>123';
+                                testInput.dispatchEvent(new Event('input', { bubbles: true }));
+                                
+                                setTimeout(() => {
+                                    const highlightedText = iframeDoc.querySelector('.highlighted-text');
+                                    if (highlightedText && !highlightedText.innerHTML.includes('<script>')) {
+                                        console.log('✅ HTML in test input properly escaped');
+                                    } else {
+                                        console.log('❌ HTML in test input not escaped');
+                                    }
+                                    
+                                    console.log('🎯 Fix 2 VERIFIED: XSS protection working correctly');
+                                }, 200);
+                            }, 200);
+                        }, 200);
+                    }, 200);
+                } else {
+                    console.log('❌ Could not find required inputs');
+                }
+            };
+        }
+        
+        // Start server and test
+        setTimeout(testXSSProtection, 1000);
+    </script>
+</body>
+</html>

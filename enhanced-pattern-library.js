@@ -8,6 +8,7 @@ class EnhancedPatternLibrary {
         this.regexTester = regexTester;
         this.container = document.getElementById('pattern-library-container');
         this.selectedCategory = 'Network';
+        this.domCache = new Map(); // Performance optimization
         this.recentPatterns = this.loadRecentPatterns();
         this.init();
     }
@@ -114,10 +115,10 @@ class EnhancedPatternLibrary {
             }
         });
         
-        // Search functionality
-        const searchInput = document.getElementById('pattern-search');
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
+        // Search functionality with caching
+        this.searchInput = this.getCachedElement('pattern-search');
+        if (this.searchInput) {
+            this.searchInput.addEventListener('input', (e) => {
                 this.searchPatterns(e.target.value);
             });
         }
@@ -328,6 +329,47 @@ class EnhancedPatternLibrary {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    // DOM element caching for performance
+    getCachedElement(id) {
+        const selector = `#${id}`;
+        if (this.domCache.has(selector)) {
+            const cached = this.domCache.get(selector);
+            if (cached && document.contains(cached)) {
+                return cached;
+            } else {
+                this.domCache.delete(selector);
+            }
+        }
+        
+        const element = document.getElementById(id);
+        if (element) {
+            this.domCache.set(selector, element);
+        }
+        return element;
+    }
+
+    // Cleanup method for memory management
+    cleanup() {
+        // Clear any intervals or timeouts
+        if (this.searchTimeout) {
+            clearTimeout(this.searchTimeout);
+        }
+        
+        // Clear references
+        this.regexTester = null;
+        this.patternContainer = null;
+        this.searchInput = null;
+        this.searchResults = null;
+        this.recentPatterns = [];
+        
+        // Clear DOM cache
+        if (this.domCache) {
+            this.domCache.clear();
+        }
+        
+        console.log('EnhancedPatternLibrary cleanup completed');
     }
 }
 

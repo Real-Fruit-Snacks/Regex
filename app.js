@@ -21,6 +21,20 @@ class RegexTester {
         this.themeDropdownSelected = document.getElementById('theme-dropdown-selected');
         this.themeDropdownOptions = document.getElementById('theme-dropdown-options');
         
+        // Store event handlers for cleanup
+        this.eventHandlers = new Map();
+        this.boundHandlers = [];
+        
+        // Performance optimizations
+        this.regexCache = new Map();
+        this.lastPattern = '';
+        this.lastFlags = '';
+        this.lastMode = '';
+        this.cachedRegex = null;
+        
+        // DOM element cache
+        this.domCache = new Map();
+        
         this.initializeEventListeners();
         this.loadSavedTheme();
         this.loadSavedMode();
@@ -979,6 +993,16 @@ class RegexTester {
         }
         
         try {
+            // Validate pattern for security
+            if (!this.validateRegexPattern(originalPattern)) {
+                this.regexError.textContent = 'Pattern contains potentially unsafe content';
+                this.regexError.className = 'error-message';
+                this.highlightedText.innerHTML = this.escapeHtml(text);
+                this.matchCount.textContent = 'Invalid pattern';
+                this.matchDetails.innerHTML = '';
+                return;
+            }
+
             // Transform pattern based on regex mode
             const patternResult = this.transformPattern(originalPattern, mode);
             if (patternResult.error) {
@@ -1017,13 +1041,22 @@ class RegexTester {
             const combinedFlags = [...new Set((patternFlags + validatedFlags).split(''))].join('');
             const finalFlags = combinedFlags;
 
-            // Create regex and find matches
-            const regex = new RegExp(finalPattern, finalFlags);
+            // Create regex with caching for performance
+            const regex = this.getCachedRegex(finalPattern, finalFlags, mode);
             const matches = [];
             let match;
             
             if (finalFlags.includes('g')) {
+                let iterationCount = 0;
+                const maxIterations = 10000; // Safety limit
+                
                 while ((match = regex.exec(text)) !== null) {
+                    // Safety check to prevent infinite loops
+                    if (++iterationCount > maxIterations) {
+                        this.showError('Pattern matching stopped: too many matches (limit: ' + maxIterations + ')');
+                        break;
+                    }
+                    
                     matches.push({
                         match: match[0],
                         index: match.index,
@@ -1031,8 +1064,21 @@ class RegexTester {
                         fullMatch: match
                     });
                     
+                    // Robust protection against zero-width matches
                     if (match.index === regex.lastIndex) {
+                        if (regex.lastIndex >= text.length) {
+                            break; // End of string reached
+                        }
                         regex.lastIndex++;
+                    }
+                    
+                    // Additional safety: if lastIndex doesn't advance, break
+                    const currentLastIndex = regex.lastIndex;
+                    if (currentLastIndex <= match.index) {
+                        regex.lastIndex = match.index + 1;
+                        if (regex.lastIndex >= text.length) {
+                            break;
+                        }
                     }
                 }
             } else {
@@ -1051,34 +1097,32 @@ class RegexTester {
             this.displayMatchDetails(matches, mode);
             
         } catch (error) {
-            this.regexError.textContent = `JavaScript Engine Error: ${error.message}`;
-            this.regexError.className = 'error-message';
-            this.highlightedText.innerHTML = this.escapeHtml(text);
-            this.matchCount.textContent = 'Invalid regex';
-            this.matchDetails.innerHTML = '';
+            this.handleError(error, 'regex-matching', 'Failed to process regular expression');
         }
     }
 
     displayMatches(matches, text) {
-        if (matches.length === 0) {
-            this.highlightedText.innerHTML = this.escapeHtml(text);
-            this.matchCount.textContent = 'No matches found';
-            return;
-        }
+        return this.safeExecute(() => {
+            if (matches.length === 0) {
+                this.highlightedText.innerHTML = this.escapeHtml(text);
+                this.matchCount.textContent = 'No matches found';
+                return;
+            }
         
-        this.matchCount.textContent = `${matches.length} match${matches.length === 1 ? '' : 'es'} found`;
-        
-        let highlightedText = '';
-        let lastIndex = 0;
-        
-        matches.forEach(match => {
-            highlightedText += this.escapeHtml(text.slice(lastIndex, match.index));
-            highlightedText += `<mark class="highlight">${this.escapeHtml(match.match)}</mark>`;
-            lastIndex = match.index + match.match.length;
-        });
-        
-        highlightedText += this.escapeHtml(text.slice(lastIndex));
-        this.highlightedText.innerHTML = highlightedText;
+            this.matchCount.textContent = `${matches.length} match${matches.length === 1 ? '' : 'es'} found`;
+            
+            let highlightedText = '';
+            let lastIndex = 0;
+            
+            matches.forEach(match => {
+                highlightedText += this.escapeHtml(text.slice(lastIndex, match.index));
+                highlightedText += `<mark class="highlight">${this.escapeHtml(match.match)}</mark>`;
+                lastIndex = match.index + match.match.length;
+            });
+            
+            highlightedText += this.escapeHtml(text.slice(lastIndex));
+            this.highlightedText.innerHTML = highlightedText;
+        }, 'display-matches');
     }
 
     displayMatchDetails(matches, mode) {
@@ -1115,9 +1159,274 @@ class RegexTester {
     }
 
     escapeHtml(text) {
+        if (typeof text !== 'string') {
+            text = String(text);
+        }
+        
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    }
+
+    // Enhanced sanitization for user inputs
+    sanitizeInput(input) {
+        if (typeof input !== 'string') {
+            input = String(input);
+        }
+        
+        // Remove any HTML tags completely
+        const stripHtml = input.replace(/<[^>]*>/g, '');
+        
+        // Escape remaining special characters
+        return this.escapeHtml(stripHtml);
+    }
+
+    // Validate regex pattern for safety
+    validateRegexPattern(pattern) {
+        if (typeof pattern !== 'string') {
+            return false;
+        }
+        
+        // Check for potentially dangerous patterns
+        const dangerousPatterns = [
+            /javascript:/i,
+            /<script/i,
+            /on\w+=/i,
+            /eval\(/i,
+            /document\./i,
+            /window\./i
+        ];
+        
+        for (const dangerous of dangerousPatterns) {
+            if (dangerous.test(pattern)) {
+                return false;
+            }
+        }
+        
+        // Check for excessive complexity (potential ReDoS)
+        const complexityIndicators = [
+            /(\*\+|\+\*)/,  // Catastrophic backtracking patterns
+            /(\*\{|\+\{)/,  // Nested quantifiers
+            /(.*){.*}/      // Complex alternation with quantifiers
+        ];
+        
+        for (const indicator of complexityIndicators) {
+            if (indicator.test(pattern)) {
+                this.showError('Pattern may be too complex and could cause performance issues');
+                return false;
+            }
+        }
+        
+        return true;
+    }
+
+    // Performance optimization: cached regex compilation
+    getCachedRegex(pattern, flags, mode) {
+        const cacheKey = `${pattern}|${flags}|${mode}`;
+        
+        // Check if we have a cached version
+        if (this.regexCache.has(cacheKey)) {
+            const cached = this.regexCache.get(cacheKey);
+            // Create a new RegExp from the cached one to reset lastIndex
+            return new RegExp(cached.source, cached.flags);
+        }
+        
+        try {
+            const regex = new RegExp(pattern, flags);
+            
+            // Cache the regex (limit cache size to prevent memory issues)
+            if (this.regexCache.size >= 100) {
+                // Remove oldest entries (simple LRU-like behavior)
+                const firstKey = this.regexCache.keys().next().value;
+                this.regexCache.delete(firstKey);
+            }
+            
+            this.regexCache.set(cacheKey, {
+                source: regex.source,
+                flags: regex.flags,
+                timestamp: Date.now()
+            });
+            
+            return regex;
+        } catch (error) {
+            // Don't cache invalid regexes
+            throw error;
+        }
+    }
+
+    // Clear regex cache
+    clearRegexCache() {
+        this.regexCache.clear();
+    }
+
+    // DOM element caching for performance
+    getCachedElement(selector) {
+        if (this.domCache.has(selector)) {
+            const cached = this.domCache.get(selector);
+            // Verify element is still in DOM
+            if (cached && document.contains(cached)) {
+                return cached;
+            } else {
+                this.domCache.delete(selector);
+            }
+        }
+        
+        const element = document.querySelector(selector);
+        if (element) {
+            this.domCache.set(selector, element);
+        }
+        return element;
+    }
+
+    getCachedElementById(id) {
+        const selector = `#${id}`;
+        if (this.domCache.has(selector)) {
+            const cached = this.domCache.get(selector);
+            // Verify element is still in DOM
+            if (cached && document.contains(cached)) {
+                return cached;
+            } else {
+                this.domCache.delete(selector);
+            }
+        }
+        
+        const element = document.getElementById(id);
+        if (element) {
+            this.domCache.set(selector, element);
+        }
+        return element;
+    }
+
+    // Clear DOM cache
+    clearDOMCache() {
+        this.domCache.clear();
+    }
+
+    // Helper method to track event listeners for cleanup
+    addEventListenerTracked(element, event, handler) {
+        if (!element) return;
+        
+        element.addEventListener(event, handler);
+        
+        // Store for cleanup
+        const key = `${element.constructor.name}_${event}`;
+        if (!this.eventHandlers.has(key)) {
+            this.eventHandlers.set(key, []);
+        }
+        this.eventHandlers.get(key).push({ element, event, handler });
+    }
+
+    // Cleanup method to remove all event listeners
+    cleanup() {
+        this.eventHandlers.forEach((handlers, key) => {
+            handlers.forEach(({ element, event, handler }) => {
+                try {
+                    element.removeEventListener(event, handler);
+                } catch (e) {
+                    console.warn('Failed to remove event listener:', e);
+                }
+            });
+        });
+        
+        this.eventHandlers.clear();
+        if (this.boundMethods) {
+            this.boundMethods = null;
+        }
+        
+        // Clear caches
+        this.clearRegexCache();
+        this.clearDOMCache();
+    }
+
+    // Enhanced error handling with recovery
+    handleError(error, context = 'Unknown', userFriendlyMessage = null) {
+        console.error(`RegexPro Error in ${context}:`, error);
+        
+        // Log to a global error array for debugging
+        if (!window.regexProErrors) {
+            window.regexProErrors = [];
+        }
+        window.regexProErrors.push({
+            error: error.message || error,
+            context,
+            timestamp: new Date().toISOString(),
+            stack: error.stack
+        });
+        
+        // Show user-friendly message
+        const message = userFriendlyMessage || this.getErrorMessage(error, context);
+        this.showError(message);
+        
+        // Attempt recovery based on error type
+        this.attemptErrorRecovery(error, context);
+    }
+
+    getErrorMessage(error, context) {
+        const errorType = error.name || 'Error';
+        
+        switch (errorType) {
+            case 'SyntaxError':
+                if (context.includes('regex')) {
+                    return 'Invalid regular expression pattern. Please check your syntax.';
+                }
+                return 'Invalid syntax detected. Please review your input.';
+                
+            case 'TypeError':
+                return 'An unexpected error occurred. The application will attempt to recover.';
+                
+            case 'RangeError':
+                if (error.message.includes('quantifier')) {
+                    return 'Regular expression is too complex. Please simplify your pattern.';
+                }
+                return 'Value is out of acceptable range.';
+                
+            default:
+                return 'An error occurred while processing your request.';
+        }
+    }
+
+    attemptErrorRecovery(error, context) {
+        try {
+            if (context.includes('regex')) {
+                // Clear regex inputs and caches
+                this.regexInput.value = '';
+                this.clearRegexCache();
+                this.highlightedText.innerHTML = this.escapeHtml(this.testInput.value);
+                this.matchCount.textContent = 'No pattern';
+                this.matchDetails.innerHTML = '';
+            }
+            
+            if (context.includes('theme')) {
+                // Reset to default theme
+                this.changeTheme('cyber-pro');
+            }
+            
+            if (context.includes('mode')) {
+                // Reset to JavaScript mode
+                this.changeMode('javascript');
+            }
+            
+            // Clear any lingering error states
+            setTimeout(() => {
+                if (this.regexError.textContent) {
+                    this.regexError.textContent = '';
+                    this.regexError.className = '';
+                }
+            }, 5000);
+            
+        } catch (recoveryError) {
+            console.error('Error recovery failed:', recoveryError);
+        }
+    }
+
+    // Wrapper for safe DOM operations
+    safeExecute(operation, context, fallback = null) {
+        try {
+            return operation();
+        } catch (error) {
+            this.handleError(error, context);
+            return fallback;
+        }
     }
 
     syncScroll() {
@@ -1126,19 +1435,93 @@ class RegexTester {
     }
 }
 
+// Global cleanup function
+window.cleanupRegexPro = function() {
+    if (regexTester && typeof regexTester.cleanup === 'function') {
+        regexTester.cleanup();
+    }
+    if (enhancedPatternLibrary && typeof enhancedPatternLibrary.cleanup === 'function') {
+        enhancedPatternLibrary.cleanup();
+    }
+    if (keyboardShortcuts && typeof keyboardShortcuts.cleanup === 'function') {
+        keyboardShortcuts.cleanup();
+    }
+    console.log('RegexPro cleanup completed');
+};
+
 // Initialize the application
 const regexTester = new RegexTester();
 
-// Initialize enhanced pattern library
+// Enhanced module initialization with proper error handling
 let enhancedPatternLibrary;
-if (typeof EnhancedPatternLibrary !== 'undefined') {
-    enhancedPatternLibrary = new EnhancedPatternLibrary(regexTester);
+let keyboardShortcuts;
+
+function initializeModules() {
+    const maxRetries = 10;
+    const retryDelay = 100; // ms
+    let retryCount = 0;
+
+    function attemptInitialization() {
+        retryCount++;
+        let modulesInitialized = 0;
+        let totalModules = 2;
+
+        // Initialize enhanced pattern library
+        if (typeof EnhancedPatternLibrary !== 'undefined') {
+            try {
+                if (!enhancedPatternLibrary) {
+                    enhancedPatternLibrary = new EnhancedPatternLibrary(regexTester);
+                    console.log('✅ EnhancedPatternLibrary initialized successfully');
+                }
+                modulesInitialized++;
+            } catch (error) {
+                console.warn('Failed to initialize EnhancedPatternLibrary:', error);
+            }
+        } else if (retryCount < maxRetries) {
+            console.log(`Waiting for EnhancedPatternLibrary... (attempt ${retryCount})`);
+        }
+
+        // Initialize keyboard shortcuts
+        if (typeof KeyboardShortcuts !== 'undefined') {
+            try {
+                if (!keyboardShortcuts) {
+                    keyboardShortcuts = new KeyboardShortcuts(regexTester);
+                    console.log('✅ KeyboardShortcuts initialized successfully');
+                }
+                modulesInitialized++;
+            } catch (error) {
+                console.warn('Failed to initialize KeyboardShortcuts:', error);
+            }
+        } else if (retryCount < maxRetries) {
+            console.log(`Waiting for KeyboardShortcuts... (attempt ${retryCount})`);
+        }
+
+        // Check if all modules are initialized
+        if (modulesInitialized === totalModules) {
+            console.log('🎯 All modules initialized successfully');
+            return true;
+        }
+
+        // Retry if not all modules are loaded and we haven't exceeded max retries
+        if (retryCount < maxRetries) {
+            setTimeout(attemptInitialization, retryDelay);
+        } else {
+            console.warn(`⚠️ Failed to initialize all modules after ${maxRetries} attempts`);
+            console.warn('Application will continue with basic functionality');
+        }
+
+        return false;
+    }
+
+    // Start initialization
+    attemptInitialization();
 }
 
-// Initialize keyboard shortcuts
-let keyboardShortcuts;
-if (typeof KeyboardShortcuts !== 'undefined') {
-    keyboardShortcuts = new KeyboardShortcuts(regexTester);
+// Wait for DOM to be ready, then initialize modules
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeModules);
+} else {
+    initializeModules();
 }
 
 // Update status bar current mode
@@ -1162,3 +1545,34 @@ if (regexTester.regexMode) {
 
 // Initialize status bar
 updateStatusMode();
+
+// Add cleanup on page unload
+window.addEventListener('beforeunload', () => {
+    if (typeof window.cleanupRegexPro === 'function') {
+        window.cleanupRegexPro();
+    }
+});
+
+// Add cleanup on visibility change (for SPAs)
+document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+        if (typeof window.cleanupRegexPro === 'function') {
+            window.cleanupRegexPro();
+        }
+    }
+});
+
+// Global error handling
+window.addEventListener('error', (event) => {
+    console.error('Global error caught:', event.error);
+    if (window.regexTester && typeof window.regexTester.handleError === 'function') {
+        window.regexTester.handleError(event.error, 'global', 'An unexpected error occurred');
+    }
+});
+
+window.addEventListener('unhandledrejection', (event) => {
+    console.error('Unhandled promise rejection:', event.reason);
+    if (window.regexTester && typeof window.regexTester.handleError === 'function') {
+        window.regexTester.handleError(event.reason, 'promise', 'An asynchronous operation failed');
+    }
+});

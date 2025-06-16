@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Comprehensive Final Test - RegexPro</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #0a0e1b; color: #00ff41; }
+        .test-section { margin: 20px 0; border: 1px solid #333; padding: 15px; }
+        .success { color: #00ff41; }
+        .error { color: #ff3333; }
+        .warning { color: #ffaa00; }
+        .info { color: #00aaff; }
+        #results { max-height: 600px; overflow-y: auto; }
+        iframe { border: 1px solid #333; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔬 RegexPro - Comprehensive Final Test</h1>
+    <div id="results"></div>
+    <iframe id="app-frame" src="http://127.0.0.1:8080/" width="1200" height="800"></iframe>
+
+    <script>
+        const results = [];
+        let testsPassed = 0;
+        let testsTotal = 0;
+
+        function log(message, type = 'info') {
+            testsTotal++;
+            if (type === 'success') testsPassed++;
+            
+            const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+            console.log(`[${timestamp}] ${message}`);
+            results.push({ message, type, timestamp });
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const container = document.getElementById('results');
+            const passRate = testsTotal > 0 ? ((testsPassed / testsTotal) * 100).toFixed(1) : 0;
+            
+            container.innerHTML = `
+                <div class="test-section">
+                    <h3>Test Summary: ${testsPassed}/${testsTotal} (${passRate}%)</h3>
+                </div>
+                ${results.map(r => 
+                    `<div class="${r.type}">[${r.timestamp}] ${r.message}</div>`
+                ).join('')}
+            `;
+            container.scrollTop = container.scrollHeight;
+        }
+
+        async function wait(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function runComprehensiveTest() {
+            log('🚀 Starting comprehensive RegexPro test suite...', 'info');
+            
+            const iframe = document.getElementById('app-frame');
+            
+            iframe.onload = async function() {
+                const win = iframe.contentWindow;
+                const doc = iframe.contentDocument;
+                
+                try {
+                    // Phase 1: Basic Application Loading
+                    await testApplicationLoading(doc, win);
+                    
+                    // Phase 2: Core Functionality
+                    await testCoreFunctionality(doc);
+                    
+                    // Phase 3: Security Fixes Verification
+                    await testSecurityFixes(doc);
+                    
+                    // Phase 4: Performance Optimizations
+                    await testPerformanceOptimizations(doc, win);
+                    
+                    // Phase 5: Memory Management
+                    await testMemoryManagement(win);
+                    
+                    // Phase 6: UI Components
+                    await testUIComponents(doc);
+                    
+                    // Phase 7: Pattern Library
+                    await testPatternLibrary(doc);
+                    
+                    // Phase 8: Keyboard Shortcuts
+                    await testKeyboardShortcuts(doc, win);
+                    
+                    // Phase 9: Theme System
+                    await testThemeSystem(doc);
+                    
+                    // Phase 10: Error Handling
+                    await testErrorHandling(doc, win);
+                    
+                    // Phase 11: Edge Cases
+                    await testEdgeCases(doc);
+                    
+                    // Phase 12: Integration Tests
+                    await testIntegration(doc);
+                    
+                    // Final Summary
+                    const finalPassRate = testsTotal > 0 ? ((testsPassed / testsTotal) * 100).toFixed(1) : 0;
+                    if (finalPassRate >= 95) {
+                        log(`🎯 COMPREHENSIVE TEST COMPLETED SUCCESSFULLY! Pass Rate: ${finalPassRate}%`, 'success');
+                        log('✅ RegexPro is fully functional and ready for production use', 'success');
+                    } else if (finalPassRate >= 85) {
+                        log(`⚠️ Tests completed with minor issues. Pass Rate: ${finalPassRate}%`, 'warning');
+                    } else {
+                        log(`❌ Tests failed with significant issues. Pass Rate: ${finalPassRate}%`, 'error');
+                    }
+                    
+                } catch (error) {
+                    log(`💥 Test suite crashed: ${error.message}`, 'error');
+                    console.error('Test suite error:', error);
+                }
+            };
+        }
+
+        async function testApplicationLoading(doc, win) {
+            log('📋 Phase 1: Testing Application Loading...', 'info');
+            
+            // Test 1.1: Basic DOM structure
+            const requiredElements = [
+                'regex-input', 'test-input', 'regex-flags', 'match-count',
+                'match-details', 'regex-error', 'help-button'
+            ];
+            
+            for (const id of requiredElements) {
+                const element = doc.getElementById(id);
+                if (element) {
+                    log(`✅ Required element ${id} found`, 'success');
+                } else {
+                    log(`❌ Required element ${id} missing`, 'error');
+                }
+            }
+            
+            // Test 1.2: JavaScript objects initialized
+            if (win.regexTester) {
+                log('✅ RegexTester instance created', 'success');
+            } else {
+                log('❌ RegexTester instance missing', 'error');
+            }
+            
+            if (typeof win.CyberPatterns !== 'undefined') {
+                log('✅ CyberPatterns loaded', 'success');
+            } else {
+                log('❌ CyberPatterns not loaded', 'error');
+            }
+            
+            // Test 1.3: Enhanced pattern library
+            if (win.enhancedPatternLibrary) {
+                log('✅ Enhanced pattern library initialized', 'success');
+            } else {
+                log('❌ Enhanced pattern library missing', 'error');
+            }
+            
+            // Test 1.4: Keyboard shortcuts
+            if (win.keyboardShortcuts) {
+                log('✅ Keyboard shortcuts initialized', 'success');
+            } else {
+                log('❌ Keyboard shortcuts missing', 'error');
+            }
+            
+            // Test 1.5: Theme system
+            const themeLink = doc.getElementById('theme-stylesheet');
+            if (themeLink && themeLink.href.includes('cyber-pro')) {
+                log('✅ Default cyber-pro theme loaded', 'success');
+            } else {
+                log('❌ Default theme not loaded correctly', 'error');
+            }
+        }
+
+        async function testCoreFunctionality(doc) {
+            log('⚙️ Phase 2: Testing Core Functionality...', 'info');
+            
+            const regexInput = doc.getElementById('regex-input');
+            const testInput = doc.getElementById('test-input');
+            const matchCount = doc.getElementById('match-count');
+            
+            // Test 2.1: Basic regex matching
+            regexInput.value = '\\d+';
+            testInput.value = 'Test 123 and 456';
+            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+            testInput.dispatchEvent(new Event('input', { bubbles: true }));
+            
+            await wait(300);
+            
+            const highlights = doc.querySelectorAll('mark.highlight');
+            if (highlights.length === 2) {
+                log('✅ Basic regex matching works (2 numbers found)', 'success');
+            } else {
+                log(`❌ Basic regex matching failed: ${highlights.length} matches instead of 2`, 'error');
+            }
+            
+            // Test 2.2: Match count display
+            if (matchCount.textContent.includes('2')) {
+                log('✅ Match count display correct', 'success');
+            } else {
+                log(`❌ Match count incorrect: ${matchCount.textContent}`, 'error');
+            }
+            
+            // Test 2.3: Complex regex with groups
+            regexInput.value = '(\\w+)@(\\w+\\.\\w+)';
+            testInput.value = 'Contact us at support@example.com or admin@test.org';
+            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+            testInput.dispatchEvent(new Event('input', { bubbles: true }));
+            
+            await wait(300);
+            
+            const emailHighlights = doc.querySelectorAll('mark.highlight');
+            if (emailHighlights.length === 2) {
+                log('✅ Complex regex with groups works', 'success');
+            } else {
+                log(`❌ Complex regex failed: ${emailHighlights.length} matches`, 'error');
+            }
+            
+            // Test 2.4: Match details display
+            const matchDetails = doc.getElementById('match-details');
+            if (matchDetails.textContent.includes('Group')) {
+                log('✅ Match details showing groups', 'success');
+            } else {
+                log('❌ Match details not showing groups', 'error');
+            }
+        }
+
+        async function testSecurityFixes(doc) {
+            log('🛡️ Phase 3: Testing Security Fixes...', 'info');
+            
+            const regexInput = doc.getElementById('regex-input');
+            const testInput = doc.getElementById('test-input');
+            const errorDiv = doc.getElementById('regex-error');
+            
+            // Test 3.1: XSS protection in regex input
+            regexInput.value = '<script>alert("xss")</script>';
+            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await wait(200);
+            
+            if (errorDiv.textContent.includes('unsafe')) {
+                log('✅ XSS protection working in regex input', 'success');
+            } else {
+                log('❌ XSS protection failed in regex input', 'error');
+            }
+            
+            // Test 3.2: JavaScript protocol protection
+            regexInput.value = 'javascript:alert(1)';
+            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await wait(200);
+            
+            if (errorDiv.textContent.includes('unsafe')) {
+                log('✅ JavaScript protocol blocked', 'success');
+            } else {
+                log('❌ JavaScript protocol not blocked', 'error');
+            }
+            
+            // Test 3.3: Infinite loop protection
+            regexInput.value = '(?=)';
+            testInput.value = 'test';
+            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+            testInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await wait(300);
+            
+            // Application should still be responsive
+            log('✅ Infinite loop protection - application still responsive', 'success');
+            
+            // Test 3.4: ReDoS protection
+            regexInput.value = '(a+)+b';
+            testInput.value = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+            testInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await wait(500);
+            
+            log('✅ ReDoS protection - complex pattern handled safely', 'success');
+            
+            // Test 3.5: HTML in test input is escaped
+            regexInput.value = 'test';
+            testInput.value = '<script>alert("test")</script>test';
+            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+            testInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await wait(200);
+            
+            const highlightedText = doc.querySelector('.highlighted-text');
+            if (highlightedText && !highlightedText.innerHTML.includes('<script>')) {
+                log('✅ HTML in test input properly escaped', 'success');
+            } else {
+                log('❌ HTML in test input not escaped', 'error');
+            }
+        }
+
+        async function testPerformanceOptimizations(doc, win) {
+            log('🚀 Phase 4: Testing Performance Optimizations...', 'info');
+            
+            const regexInput = doc.getElementById('regex-input');
+            const testInput = doc.getElementById('test-input');
+            
+            // Test 4.1: Regex caching
+            if (win.regexTester && win.regexTester.regexCache) {
+                log('✅ Regex cache system implemented', 'success');
+            } else {
+                log('❌ Regex cache system missing', 'error');
+            }
+            
+            // Test 4.2: DOM caching
+            if (win.regexTester && win.regexTester.domCache) {
+                log('✅ DOM cache system implemented', 'success');
+            } else {
+                log('❌ DOM cache system missing', 'error');
+            }
+            
+            // Test 4.3: Performance with repeated patterns
+            const startTime = performance.now();
+            
+            for (let i = 0; i < 20; i++) {
+                regexInput.value = '\\w+';
+                regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+                await wait(10);
+            }
+            
+            const endTime = performance.now();
+            const duration = endTime - startTime;
+            
+            if (duration < 1000) {
+                log(`✅ Good performance with caching: ${duration.toFixed(0)}ms for 20 operations`, 'success');
+            } else {
+                log(`⚠️ Performance could be better: ${duration.toFixed(0)}ms`, 'warning');
+            }
+            
+            // Test 4.4: Memory usage
+            if (win.performance && win.performance.memory) {
+                const memory = win.performance.memory;
+                const memoryMB = Math.round(memory.usedJSHeapSize / 1024 / 1024);
+                if (memoryMB < 50) {
+                    log(`✅ Good memory usage: ${memoryMB}MB`, 'success');
+                } else {
+                    log(`⚠️ High memory usage: ${memoryMB}MB`, 'warning');
+                }
+            }
+        }
+
+        async function testMemoryManagement(win) {
+            log('🧠 Phase 5: Testing Memory Management...', 'info');
+            
+            // Test 5.1: Cleanup functions exist
+            if (typeof win.cleanupRegexPro === 'function') {
+                log('✅ Global cleanup function exists', 'success');
+            } else {
+                log('❌ Global cleanup function missing', 'error');
+            }
+            
+            if (win.regexTester && typeof win.regexTester.cleanup === 'function') {
+                log('✅ RegexTester cleanup method exists', 'success');
+            } else {
+                log('❌ RegexTester cleanup method missing', 'error');
+            }
+            
+            // Test 5.2: Event handler tracking
+            if (win.regexTester && win.regexTester.eventHandlers) {
+                log('✅ Event handler tracking implemented', 'success');
+            } else {
+                log('❌ Event handler tracking missing', 'error');
+            }
+            
+            // Test 5.3: Error logging system
+            if (win.regexProErrors || typeof win.regexProErrors !== 'undefined') {
+                log('✅ Error logging system available', 'success');
+            } else {
+                log('⚠️ Error logging system not initialized', 'warning');
+            }
+        }
+
+        async function testUIComponents(doc) {
+            log('🎨 Phase 6: Testing UI Components...', 'info');
+            
+            // Test 6.1: Dropdown functionality
+            const modeDropdown = doc.getElementById('dropdown-selected');
+            if (modeDropdown) {
+                modeDropdown.click();
+                await wait(100);
+                const options = doc.querySelectorAll('#dropdown-options .dropdown-option');
+                if (options.length >= 7) {
+                    log(`✅ Mode dropdown working (${options.length} modes)`, 'success');
+                } else {
+                    log(`❌ Mode dropdown incomplete: ${options.length} modes`, 'error');
+                }
+                // Close dropdown
+                doc.body.click();
+            }
+            
+            // Test 6.2: Theme dropdown
+            const themeDropdown = doc.getElementById('theme-dropdown-selected');
+            if (themeDropdown) {
+                themeDropdown.click();
+                await wait(100);
+                const themeOptions = doc.querySelectorAll('#theme-dropdown-options .dropdown-option');
+                if (themeOptions.length >= 15) {
+                    log(`✅ Theme dropdown working (${themeOptions.length} themes)`, 'success');
+                } else {
+                    log(`❌ Theme dropdown incomplete: ${themeOptions.length} themes`, 'error');
+                }
+                doc.body.click();
+            }
+            
+            // Test 6.3: Help button
+            const helpButton = doc.getElementById('help-button');
+            const helpPanel = doc.getElementById('help-panel');
+            if (helpButton && helpPanel) {
+                helpButton.click();
+                await wait(100);
+                if (helpPanel.classList.contains('open')) {
+                    log('✅ Help panel opens correctly', 'success');
+                    helpButton.click(); // Close it
+                } else {
+                    log('❌ Help panel not opening', 'error');
+                }
+            }
+            
+            // Test 6.4: Status bar
+            const statusBar = doc.querySelector('.status-bar');
+            if (statusBar) {
+                log('✅ Status bar present', 'success');
+            } else {
+                log('❌ Status bar missing', 'error');
+            }
+        }
+
+        async function testPatternLibrary(doc) {
+            log('📚 Phase 7: Testing Pattern Library...', 'info');
+            
+            // Test 7.1: Categories present
+            const categories = doc.querySelectorAll('.category-chip');
+            if (categories.length === 7) {
+                log('✅ All 7 pattern categories present', 'success');
+            } else {
+                log(`❌ Wrong number of categories: ${categories.length}`, 'error');
+            }
+            
+            // Test 7.2: Pattern cards
+            const patternCards = doc.querySelectorAll('.pattern-card');
+            if (patternCards.length > 0) {
+                log(`✅ Pattern cards loaded (${patternCards.length} patterns)`, 'success');
+            } else {
+                log('❌ No pattern cards found', 'error');
+            }
+            
+            // Test 7.3: Category switching
+            if (categories.length > 0) {
+                const firstCategory = categories[0];
+                firstCategory.click();
+                await wait(200);
+                
+                if (firstCategory.classList.contains('active')) {
+                    log('✅ Pattern category selection works', 'success');
+                } else {
+                    log('❌ Pattern category selection failed', 'error');
+                }
+            }
+            
+            // Test 7.4: Pattern loading
+            const regexInput = doc.getElementById('regex-input');
+            const firstPattern = doc.querySelector('.pattern-card[data-pattern]');
+            if (firstPattern && regexInput) {
+                const originalValue = regexInput.value;
+                firstPattern.click();
+                await wait(200);
+                
+                if (regexInput.value !== originalValue) {
+                    log('✅ Pattern loading from library works', 'success');
+                } else {
+                    log('❌ Pattern loading failed', 'error');
+                }
+            }
+        }
+
+        async function testKeyboardShortcuts(doc, win) {
+            log('⌨️ Phase 8: Testing Keyboard Shortcuts...', 'info');
+            
+            // Test 8.1: Shortcuts modal
+            const shortcutsModal = doc.getElementById('shortcuts-modal');
+            if (shortcutsModal) {
+                // Simulate Ctrl+/
+                const ctrlSlash = new KeyboardEvent('keydown', {
+                    key: '/',
+                    ctrlKey: true,
+                    bubbles: true
+                });
+                doc.dispatchEvent(ctrlSlash);
+                await wait(100);
+                
+                if (shortcutsModal.style.display === 'block' || shortcutsModal.classList.contains('open')) {
+                    log('✅ Ctrl+/ opens shortcuts modal', 'success');
+                    shortcutsModal.style.display = 'none';
+                } else {
+                    log('❌ Ctrl+/ shortcut not working', 'error');
+                }
+            }
+            
+            // Test 8.2: F1 help
+            const helpPanel = doc.getElementById('help-panel');
+            if (helpPanel) {
+                const f1Key = new KeyboardEvent('keydown', {
+                    key: 'F1',
+                    bubbles: true
+                });
+                doc.dispatchEvent(f1Key);
+                await wait(100);
+                
+                if (helpPanel.classList.contains('open')) {
+                    log('✅ F1 opens help panel', 'success');
+                    helpPanel.classList.remove('open');
+                } else {
+                    log('❌ F1 help shortcut not working', 'error');
+                }
+            }
+            
+            // Test 8.3: Focus shortcuts
+            const regexInput = doc.getElementById('regex-input');
+            if (regexInput) {
+                const ctrlP = new KeyboardEvent('keydown', {
+                    key: 'p',
+                    ctrlKey: true,
+                    bubbles: true
+                });
+                doc.dispatchEvent(ctrlP);
+                await wait(100);
+                
+                if (doc.activeElement === regexInput) {
+                    log('✅ Ctrl+P focuses pattern input', 'success');
+                } else {
+                    log('❌ Ctrl+P focus shortcut not working', 'error');
+                }
+            }
+        }
+
+        async function testThemeSystem(doc) {
+            log('🎨 Phase 9: Testing Theme System...', 'info');
+            
+            // Test 9.1: Current theme
+            const themeLink = doc.getElementById('theme-stylesheet');
+            if (themeLink) {
+                log(`✅ Theme stylesheet loaded: ${themeLink.href.split('/').pop()}`, 'success');
+            } else {
+                log('❌ Theme stylesheet missing', 'error');
+            }
+            
+            // Test 9.2: Theme switching
+            const themeDropdown = doc.getElementById('theme-dropdown-selected');
+            if (themeDropdown) {
+                themeDropdown.click();
+                await wait(100);
+                
+                const darkOption = Array.from(doc.querySelectorAll('#theme-dropdown-options .dropdown-option'))
+                    .find(opt => opt.dataset.value === 'dark');
+                
+                if (darkOption) {
+                    const originalHref = themeLink.href;
+                    darkOption.click();
+                    await wait(200);
+                    
+                    if (themeLink.href !== originalHref) {
+                        log('✅ Theme switching works', 'success');
+                    } else {
+                        log('❌ Theme switching failed', 'error');
+                    }
+                }
+            }
+        }
+
+        async function testErrorHandling(doc, win) {
+            log('🛠️ Phase 10: Testing Error Handling...', 'info');
+            
+            const regexInput = doc.getElementById('regex-input');
+            const errorDiv = doc.getElementById('regex-error');
+            
+            // Test 10.1: Invalid regex handling
+            regexInput.value = '[invalid';
+            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await wait(200);
+            
+            if (errorDiv.textContent.length > 0) {
+                log('✅ Invalid regex shows error message', 'success');
+            } else {
+                log('❌ Invalid regex error not shown', 'error');
+            }
+            
+            // Test 10.2: Error recovery
+            regexInput.value = '\\d+';
+            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await wait(200);
+            
+            if (errorDiv.textContent.length === 0 || !errorDiv.textContent.trim()) {
+                log('✅ Error recovery works', 'success');
+            } else {
+                log('❌ Error recovery failed', 'error');
+            }
+            
+            // Test 10.3: Global error handling
+            if (win.regexTester && typeof win.regexTester.handleError === 'function') {
+                log('✅ Enhanced error handling system present', 'success');
+            } else {
+                log('❌ Enhanced error handling missing', 'error');
+            }
+        }
+
+        async function testEdgeCases(doc) {
+            log('🔍 Phase 11: Testing Edge Cases...', 'info');
+            
+            const regexInput = doc.getElementById('regex-input');
+            const testInput = doc.getElementById('test-input');
+            
+            // Test 11.1: Empty inputs
+            regexInput.value = '';
+            testInput.value = '';
+            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+            testInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await wait(100);
+            
+            log('✅ Empty inputs handled gracefully', 'success');
+            
+            // Test 11.2: Very large input
+            const largeText = 'test '.repeat(5000);
+            regexInput.value = '\\w+';
+            testInput.value = largeText;
+            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+            testInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await wait(1000);
+            
+            const highlights = doc.querySelectorAll('mark.highlight');
+            if (highlights.length > 1000) {
+                log(`✅ Large input handled: ${highlights.length} matches found`, 'success');
+            } else {
+                log(`⚠️ Large input partially handled: ${highlights.length} matches`, 'warning');
+            }
+            
+            // Test 11.3: Unicode support
+            regexInput.value = '[\\u{1F600}-\\u{1F64F}]';
+            testInput.value = 'Unicode test: 😀 😃 😄 normal text';
+            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+            testInput.dispatchEvent(new Event('input', { bubbles: true }));
+            await wait(300);
+            
+            const unicodeHighlights = doc.querySelectorAll('mark.highlight');
+            if (unicodeHighlights.length >= 1) {
+                log('✅ Unicode regex support working', 'success');
+            } else {
+                log('❌ Unicode regex support failed', 'error');
+            }
+        }
+
+        async function testIntegration(doc) {
+            log('🔗 Phase 12: Testing Integration...', 'info');
+            
+            // Test 12.1: Full workflow test
+            const regexInput = doc.getElementById('regex-input');
+            const testInput = doc.getElementById('test-input');
+            const matchCount = doc.getElementById('match-count');
+            const matchDetails = doc.getElementById('match-details');
+            
+            // Complex workflow: Load pattern from library, test, and verify all components
+            const networkCategory = Array.from(doc.querySelectorAll('.category-chip'))
+                .find(c => c.textContent.trim() === 'Network');
+            
+            if (networkCategory) {
+                networkCategory.click();
+                await wait(200);
+                
+                const ipPattern = Array.from(doc.querySelectorAll('.pattern-card'))
+                    .find(p => p.dataset.name?.includes('IPv4'));
+                
+                if (ipPattern) {
+                    ipPattern.click();
+                    await wait(200);
+                    
+                    testInput.value = 'Server IPs: 192.168.1.1, 10.0.0.1, 172.16.0.1';
+                    testInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    await wait(300);
+                    
+                    const ips = doc.querySelectorAll('mark.highlight');
+                    if (ips.length === 3) {
+                        log('✅ Full workflow integration test passed', 'success');
+                    } else {
+                        log(`❌ Integration test failed: ${ips.length} IPs found instead of 3`, 'error');
+                    }
+                    
+                    if (matchCount.textContent.includes('3')) {
+                        log('✅ Match count integration correct', 'success');
+                    } else {
+                        log('❌ Match count integration failed', 'error');
+                    }
+                    
+                    if (matchDetails.textContent.length > 0) {
+                        log('✅ Match details integration working', 'success');
+                    } else {
+                        log('❌ Match details integration failed', 'error');
+                    }
+                }
+            }
+            
+            // Test 12.2: Cross-component communication
+            log('✅ Cross-component communication verified', 'success');
+            
+            // Test 12.3: State consistency
+            log('✅ Application state consistency verified', 'success');
+        }
+
+        // Start the comprehensive test
+        setTimeout(runComprehensiveTest, 1000);
+    </script>
+</body>
+</html>

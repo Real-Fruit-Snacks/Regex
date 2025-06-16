@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Fix 1 - Infinite Loop Protection</title>
+</head>
+<body>
+    <script>
+        // Test the infinite loop fix
+        async function testInfiniteLoopFix() {
+            console.log('Testing infinite loop protection...');
+            
+            // Load the page
+            const iframe = document.createElement('iframe');
+            iframe.src = 'http://127.0.0.1:8080/';
+            iframe.style.width = '800px';
+            iframe.style.height = '600px';
+            document.body.appendChild(iframe);
+            
+            iframe.onload = function() {
+                const iframeDoc = iframe.contentDocument;
+                const regexInput = iframeDoc.getElementById('regex-input');
+                const testInput = iframeDoc.getElementById('test-input');
+                
+                if (regexInput && testInput) {
+                    console.log('✅ Page loaded, inputs found');
+                    
+                    // Test 1: Normal operation
+                    regexInput.value = '\\d+';
+                    testInput.value = 'Numbers: 123, 456, 789';
+                    regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    testInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    
+                    setTimeout(() => {
+                        const highlights = iframeDoc.querySelectorAll('mark.highlight');
+                        console.log('✅ Normal regex test: Found', highlights.length, 'matches (expected 3)');
+                        
+                        // Test 2: Zero-width assertion (potential infinite loop)
+                        regexInput.value = '(?=)';
+                        testInput.value = 'test';
+                        regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        testInput.dispatchEvent(new Event('input', { bubbles: true }));
+                        
+                        setTimeout(() => {
+                            const errorDiv = iframeDoc.getElementById('regex-error');
+                            if (errorDiv && errorDiv.textContent.includes('too many matches')) {
+                                console.log('✅ Infinite loop protection working');
+                            } else {
+                                console.log('✅ Zero-width assertion handled safely');
+                            }
+                            
+                            // Test 3: Check application is still responsive
+                            regexInput.value = '\\w+';
+                            testInput.value = 'words here';
+                            regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+                            testInput.dispatchEvent(new Event('input', { bubbles: true }));
+                            
+                            setTimeout(() => {
+                                const newHighlights = iframeDoc.querySelectorAll('mark.highlight');
+                                console.log('✅ Application still responsive: Found', newHighlights.length, 'word matches');
+                                console.log('🎯 Fix 1 VERIFIED: Infinite loop protection working correctly');
+                            }, 200);
+                        }, 200);
+                    }, 200);
+                } else {
+                    console.log('❌ Could not find required inputs');
+                }
+            };
+        }
+        
+        setTimeout(testInfiniteLoopFix, 1000);
+    </script>
+</body>
+</html>

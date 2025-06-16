@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Final Smoke Test</title>
+    <style>
+        body { font-family: monospace; background: #000; color: #0f0; padding: 20px; }
+        .result { margin: 10px 0; padding: 10px; border: 1px solid #333; }
+        .pass { border-color: #0f0; background: #001100; }
+        .fail { border-color: #f00; background: #110000; }
+    </style>
+</head>
+<body>
+    <h1>🔬 RegexPro Final Smoke Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        // Load the application in an iframe and test basic functionality
+        const iframe = document.createElement('iframe');
+        iframe.src = 'http://127.0.0.1:8080/';
+        iframe.style.display = 'none';
+        document.body.appendChild(iframe);
+        
+        const results = [];
+        
+        function addResult(test, status, details = '') {
+            results.push({ test, status, details });
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            const container = document.getElementById('results');
+            container.innerHTML = results.map(r => 
+                `<div class="result ${r.status}">
+                    ${r.status === 'pass' ? '✅' : '❌'} ${r.test}
+                    ${r.details ? `<br><small>${r.details}</small>` : ''}
+                </div>`
+            ).join('');
+        }
+        
+        iframe.onload = function() {
+            const win = iframe.contentWindow;
+            const doc = iframe.contentDocument;
+            
+            // Test 1: Basic loading
+            setTimeout(() => {
+                if (win.regexTester) {
+                    addResult('Application loads successfully', 'pass');
+                } else {
+                    addResult('Application failed to load', 'fail');
+                }
+                
+                // Test 2: Core objects
+                if (win.CyberPatterns) {
+                    addResult('CyberPatterns loaded', 'pass', `${Object.keys(win.CyberPatterns.patterns).length} categories`);
+                } else {
+                    addResult('CyberPatterns missing', 'fail');
+                }
+                
+                // Test 3: UI elements
+                const regexInput = doc.getElementById('regex-input');
+                const testInput = doc.getElementById('test-input');
+                
+                if (regexInput && testInput) {
+                    addResult('Core UI elements present', 'pass');
+                    
+                    // Test 4: Basic functionality
+                    regexInput.value = '\\d+';
+                    testInput.value = 'Test 123 456';
+                    regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    testInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    
+                    setTimeout(() => {
+                        const highlights = doc.querySelectorAll('mark.highlight');
+                        if (highlights.length === 2) {
+                            addResult('Basic regex matching works', 'pass', '2 numbers matched');
+                        } else {
+                            addResult('Basic regex matching failed', 'fail', `${highlights.length} matches found`);
+                        }
+                        
+                        // Test 5: Security features
+                        if (win.regexTester.validateRegexPattern) {
+                            addResult('Security validation present', 'pass');
+                        } else {
+                            addResult('Security validation missing', 'fail');
+                        }
+                        
+                        // Test 6: Performance features
+                        if (win.regexTester.regexCache) {
+                            addResult('Performance caching present', 'pass');
+                        } else {
+                            addResult('Performance caching missing', 'fail');
+                        }
+                        
+                        // Test 7: Memory management
+                        if (win.cleanupRegexPro) {
+                            addResult('Memory management present', 'pass');
+                        } else {
+                            addResult('Memory management missing', 'fail');
+                        }
+                        
+                        // Final assessment
+                        const passCount = results.filter(r => r.status === 'pass').length;
+                        const totalCount = results.length;
+                        const passRate = ((passCount / totalCount) * 100).toFixed(0);
+                        
+                        setTimeout(() => {
+                            if (passRate >= 95) {
+                                addResult(`FINAL RESULT: EXCELLENT (${passRate}%)`, 'pass', 'RegexPro is fully functional');
+                            } else if (passRate >= 80) {
+                                addResult(`FINAL RESULT: GOOD (${passRate}%)`, 'pass', 'Minor issues detected');
+                            } else {
+                                addResult(`FINAL RESULT: ISSUES (${passRate}%)`, 'fail', 'Significant problems found');
+                            }
+                        }, 100);
+                        
+                    }, 500);
+                } else {
+                    addResult('Core UI elements missing', 'fail');
+                }
+                
+            }, 1000);
+        };
+        
+        iframe.onerror = function() {
+            addResult('Failed to load application', 'fail', 'Network or server error');
+        };
+    </script>
+</body>
+</html>
