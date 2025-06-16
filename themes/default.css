@@ -208,6 +208,7 @@ h2 {
     align-items: center;
     gap: 5px;
     margin-bottom: 10px;
+    position: relative;
 }
 
 .regex-delimiter {

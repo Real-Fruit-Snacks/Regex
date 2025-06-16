@@ -91,3 +91,11 @@ docs/.vscode/
 # Debug files
 debug-*.png
 *.debug.*
+
+# Implementation documentation
+IMPLEMENTATION_PLAN.md
+IMPLEMENTATION_SUMMARY.md
+
+# Test files
+test-parser.js
+test-*.js

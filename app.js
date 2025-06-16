@@ -25,6 +25,7 @@ class RegexTester {
         this.loadSavedTheme();
         this.loadSavedMode();
         this.initializeHelp();
+        this.initializeSyntaxHighlighter();
     }
 
     initializeEventListeners() {
@@ -180,6 +181,16 @@ class RegexTester {
         this.updateFlagsPlaceholder();
         this.updateMatches();
         this.updateHelp();
+        
+        // Update syntax highlighter mode
+        if (this.highlighter) {
+            this.highlighter.setMode(mode);
+        }
+        
+        // Update pattern explanation
+        if (this.explainer) {
+            this.explainer.explain(this.regexInput.value, mode);
+        }
     }
 
     updateFlagsPlaceholder() {
@@ -533,6 +544,18 @@ class RegexTester {
 
     initializeHelp() {
         this.updateHelp();
+    }
+    
+    initializeSyntaxHighlighter() {
+        // Initialize the pattern syntax highlighter
+        this.highlighter = new PatternHighlighter(this.regexInput, this.regexMode.value);
+        
+        // Initialize the pattern explainer
+        this.explainer = new PatternExplainer();
+        this.explainer.initialize();
+        
+        // Initialize enhanced tooltips
+        this.tooltips = new EnhancedTooltips();
     }
 
     updateHelp() {
@@ -920,6 +943,11 @@ class RegexTester {
         
         this.regexError.textContent = '';
         this.regexError.className = 'error-message';
+        
+        // Update pattern explanation
+        if (this.explainer) {
+            this.explainer.explain(originalPattern, mode);
+        }
         
         if (!originalPattern) {
             this.highlightedText.innerHTML = this.escapeHtml(text);
