@@ -460,3 +460,6 @@ if (!document.getElementById('keyboard-shortcut-styles')) {
     styleElement.innerHTML = shortcutStyles;
     document.head.appendChild(styleElement.firstChild);
 }
+
+// Make KeyboardShortcuts globally accessible
+window.KeyboardShortcuts = KeyboardShortcuts;

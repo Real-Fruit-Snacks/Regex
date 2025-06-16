@@ -40,7 +40,7 @@ class EnhancedPatternLibrary {
         
         this.render();
         this.bindEvents();
-        this.updateRecentPatterns();
+        this.updateRecentPatternsUI();
     }
     
     render() {
@@ -441,3 +441,6 @@ if (!document.getElementById('enhanced-pattern-library-styles')) {
     styleElement.innerHTML = enhancedStyles;
     document.head.appendChild(styleElement.firstChild);
 }
+
+// Make EnhancedPatternLibrary globally accessible
+window.EnhancedPatternLibrary = EnhancedPatternLibrary;

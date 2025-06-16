@@ -1451,6 +1451,7 @@ window.cleanupRegexPro = function() {
 
 // Initialize the application
 const regexTester = new RegexTester();
+window.regexTester = regexTester;
 
 // Enhanced module initialization with proper error handling
 let enhancedPatternLibrary;
@@ -1471,6 +1472,7 @@ function initializeModules() {
             try {
                 if (!enhancedPatternLibrary) {
                     enhancedPatternLibrary = new EnhancedPatternLibrary(regexTester);
+                    window.enhancedPatternLibrary = enhancedPatternLibrary;
                     console.log('✅ EnhancedPatternLibrary initialized successfully');
                 }
                 modulesInitialized++;
@@ -1486,6 +1488,7 @@ function initializeModules() {
             try {
                 if (!keyboardShortcuts) {
                     keyboardShortcuts = new KeyboardShortcuts(regexTester);
+                    window.keyboardShortcuts = keyboardShortcuts;
                     console.log('✅ KeyboardShortcuts initialized successfully');
                 }
                 modulesInitialized++;

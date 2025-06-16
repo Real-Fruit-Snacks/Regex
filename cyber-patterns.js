@@ -269,3 +269,6 @@ const CyberPatterns = {
         return results;
     }
 };
+
+// Make CyberPatterns globally accessible
+window.CyberPatterns = CyberPatterns;

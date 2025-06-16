@@ -1,0 +1,96 @@
+{
+  "summary": {
+    "total": 1,
+    "passed": 1,
+    "failed": 0,
+    "critical": 0,
+    "passRate": "100.0%",
+    "timestamp": "2025-06-16T22:38:45.777Z"
+  },
+  "tests": [
+    {
+      "name": "Load homepage",
+      "status": "PASS",
+      "critical": true
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "01_homepage_loaded",
+      "filepath": "test-screenshots/01_homepage_loaded.png"
+    }
+  ],
+  "consoleLogs": [
+    {
+      "type": "warn",
+      "text": "Failed to initialize EnhancedPatternLibrary: JSHandle@error",
+      "timestamp": "2025-06-16T22:38:44.615Z"
+    },
+    {
+      "type": "log",
+      "text": "✅ KeyboardShortcuts initialized successfully",
+      "timestamp": "2025-06-16T22:38:44.616Z"
+    },
+    {
+      "type": "warn",
+      "text": "Failed to initialize EnhancedPatternLibrary: JSHandle@error",
+      "timestamp": "2025-06-16T22:38:44.717Z"
+    },
+    {
+      "type": "warn",
+      "text": "Failed to initialize EnhancedPatternLibrary: JSHandle@error",
+      "timestamp": "2025-06-16T22:38:44.819Z"
+    },
+    {
+      "type": "warn",
+      "text": "Failed to initialize EnhancedPatternLibrary: JSHandle@error",
+      "timestamp": "2025-06-16T22:38:44.921Z"
+    },
+    {
+      "type": "warn",
+      "text": "Failed to initialize EnhancedPatternLibrary: JSHandle@error",
+      "timestamp": "2025-06-16T22:38:45.024Z"
+    },
+    {
+      "type": "warn",
+      "text": "Failed to initialize EnhancedPatternLibrary: JSHandle@error",
+      "timestamp": "2025-06-16T22:38:45.128Z"
+    },
+    {
+      "type": "warn",
+      "text": "Failed to initialize EnhancedPatternLibrary: JSHandle@error",
+      "timestamp": "2025-06-16T22:38:45.229Z"
+    },
+    {
+      "type": "warn",
+      "text": "Failed to initialize EnhancedPatternLibrary: JSHandle@error",
+      "timestamp": "2025-06-16T22:38:45.332Z"
+    },
+    {
+      "type": "warn",
+      "text": "Failed to initialize EnhancedPatternLibrary: JSHandle@error",
+      "timestamp": "2025-06-16T22:38:45.432Z"
+    },
+    {
+      "type": "warn",
+      "text": "Failed to initialize EnhancedPatternLibrary: JSHandle@error",
+      "timestamp": "2025-06-16T22:38:45.538Z"
+    },
+    {
+      "type": "warn",
+      "text": "⚠️ Failed to initialize all modules after 10 attempts",
+      "timestamp": "2025-06-16T22:38:45.539Z"
+    },
+    {
+      "type": "warn",
+      "text": "Application will continue with basic functionality",
+      "timestamp": "2025-06-16T22:38:45.539Z"
+    }
+  ],
+  "errors": [
+    {
+      "text": "Critical test error: this.page.waitForTimeout is not a function",
+      "timestamp": "2025-06-16T22:38:45.777Z"
+    }
+  ]
+}

@@ -6,7 +6,18 @@
   "scripts": {
     "start": "python3 -m http.server 8000 || python -m SimpleHTTPServer 8000"
   },
-  "keywords": ["regex", "regular-expression", "tester", "pcre", "grep", "vim", "python"],
+  "keywords": [
+    "regex",
+    "regular-expression",
+    "tester",
+    "pcre",
+    "grep",
+    "vim",
+    "python"
+  ],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^24.10.1"
+  }
 }
