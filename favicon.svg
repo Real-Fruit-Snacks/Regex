@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Background -->
+  <rect width="128" height="128" rx="16" fill="#2c3e50"/>
+  
+  <!-- Regex pattern visualization -->
+  <!-- Forward slashes -->
+  <text x="20" y="80" font-family="monospace" font-size="48" font-weight="bold" fill="#3498db">/</text>
+  <text x="94" y="80" font-family="monospace" font-size="48" font-weight="bold" fill="#3498db">/</text>
+  
+  <!-- Pattern symbols -->
+  <text x="42" y="80" font-family="monospace" font-size="36" font-weight="bold" fill="#e74c3c">.*</text>
+  
+  <!-- Small accent for visual interest -->
+  <circle cx="72" cy="58" r="3" fill="#2ecc71"/>
+</svg>
