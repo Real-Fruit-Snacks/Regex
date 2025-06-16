@@ -1,0 +1,6 @@
+# SHA256 checksums for Regex Tester v2.0.0 release files
+# Generate these with: sha256sum regex-tester-v2.0.0-offline.*
+
+# These are placeholder values - replace with actual checksums before release
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  regex-tester-v2.0.0-offline.tar.gz
+e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  regex-tester-v2.0.0-offline.zip

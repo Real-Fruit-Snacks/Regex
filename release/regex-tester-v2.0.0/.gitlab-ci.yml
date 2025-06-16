@@ -1,0 +1,32 @@
+# GitLab CI/CD configuration for Regex Tester
+# This file enables automatic deployment to GitLab Pages
+
+image: alpine:latest
+
+pages:
+  stage: deploy
+  script:
+    # Copy all files to public directory for GitLab Pages
+    - mkdir -p public
+    - cp -r * public/
+    - rm -rf public/public  # Remove the duplicate public folder
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
+    - master
+
+# Optional: Add a test stage to verify files
+test:
+  stage: test
+  script:
+    - echo "Checking required files..."
+    - test -f index.html || exit 1
+    - test -f app.js || exit 1
+    - test -d themes || exit 1
+    - echo "All required files present!"
+  only:
+    - merge_requests
+    - main
+    - master

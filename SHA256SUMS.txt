@@ -1,0 +1,2 @@
+be9ec42e24b5364fe8f4c94c7dd2c33abf4e5ecb8938d283e016f27c20346098  regex-tester-v2.0.0-offline.tar.gz
+b46bc7627fbc8e970eb771780faa0992779c18d45dbb02d8977136b65bd60775  regex-tester-v2.0.0-offline.zip

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regex Tester</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="favicon-192x192.png">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2c3e50">
+    
+    <link rel="stylesheet" href="themes/ayu-mirage.css" id="theme-stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Regex Tester</h1>
+            <div class="theme-selector">
+                <label>Theme:</label>
+                <div class="custom-dropdown" id="theme-dropdown">
+                    <div class="dropdown-selected" id="theme-dropdown-selected">
+                        <span class="selected-text">Ayu Mirage</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="dropdown-options" id="theme-dropdown-options">
+                        <div class="dropdown-option" data-value="default">
+                            <span class="option-name">Default</span>
+                            <span class="option-desc">(Blue & Gray)</span>
+                        </div>
+                        <div class="dropdown-option" data-value="dark">
+                            <span class="option-name">Dark</span>
+                            <span class="option-desc">(Night Mode)</span>
+                        </div>
+                        <div class="dropdown-option" data-value="light">
+                            <span class="option-name">Light</span>
+                            <span class="option-desc">(Bright & Clean)</span>
+                        </div>
+                        <div class="dropdown-option" data-value="monokai">
+                            <span class="option-name">Monokai</span>
+                            <span class="option-desc">(Classic Editor)</span>
+                        </div>
+                        <div class="dropdown-option" data-value="solarized">
+                            <span class="option-name">Solarized</span>
+                            <span class="option-desc">(Low Contrast)</span>
+                        </div>
+                        <div class="dropdown-option" data-value="dracula">
+                            <span class="option-name">Dracula</span>
+                            <span class="option-desc">(Dark & Vibrant)</span>
+                        </div>
+                        <div class="dropdown-option" data-value="one-dark">
+                            <span class="option-name">One Dark</span>
+                            <span class="option-desc">(Atom Theme)</span>
+                        </div>
+                        <div class="dropdown-option" data-value="nord">
+                            <span class="option-name">Nord</span>
+                            <span class="option-desc">(Arctic Colors)</span>
+                        </div>
+                        <div class="dropdown-option" data-value="gruvbox-dark">
+                            <span class="option-name">Gruvbox Dark</span>
+                            <span class="option-desc">(Retro Warm)</span>
+                        </div>
+                        <div class="dropdown-option" data-value="tokyo-night">
+                            <span class="option-name">Tokyo Night</span>
+                            <span class="option-desc">(Neon City)</span>
+                        </div>
+                        <div class="dropdown-option" data-value="catppuccin-mocha">
+                            <span class="option-name">Catppuccin</span>
+                            <span class="option-desc">(Pastel Dark)</span>
+                        </div>
+                        <div class="dropdown-option" data-value="ayu-light">
+                            <span class="option-name">Ayu Light</span>
+                            <span class="option-desc">(Modern Light)</span>
+                        </div>
+                        <div class="dropdown-option" data-value="ayu-mirage">
+                            <span class="option-name">Ayu Mirage</span>
+                            <span class="option-desc">(Modern Medium)</span>
+                        </div>
+                        <div class="dropdown-option" data-value="ayu-dark">
+                            <span class="option-name">Ayu Dark</span>
+                            <span class="option-desc">(Modern Dark)</span>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" id="theme-select" value="ayu-mirage">
+            </div>
+        </header>
+
+        <main>
+            <div class="regex-section">
+                <h2>Regular Expression</h2>
+                <div class="regex-mode-container">
+                    <label for="regex-mode">Mode:</label>
+                    <div class="custom-dropdown" id="regex-mode-dropdown">
+                        <div class="dropdown-selected" id="dropdown-selected">
+                            <span class="selected-text">JavaScript (ECMAScript)</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </div>
+                        <div class="dropdown-options" id="dropdown-options">
+                            <div class="dropdown-option" data-value="javascript">
+                                <span class="option-name">JavaScript</span>
+                                <span class="option-desc">(ECMAScript)</span>
+                            </div>
+                            <div class="dropdown-option" data-value="pcre">
+                                <span class="option-name">PCRE</span>
+                                <span class="option-desc">(Perl Compatible)</span>
+                            </div>
+                            <div class="dropdown-option" data-value="grep">
+                                <span class="option-name">grep</span>
+                                <span class="option-desc">(BRE)</span>
+                            </div>
+                            <div class="dropdown-option" data-value="egrep">
+                                <span class="option-name">egrep</span>
+                                <span class="option-desc">(ERE)</span>
+                            </div>
+                            <div class="dropdown-option" data-value="vim">
+                                <span class="option-name">Vim</span>
+                                <span class="option-desc">(Vi/Vim regex)</span>
+                            </div>
+                            <div class="dropdown-option" data-value="python">
+                                <span class="option-name">Python</span>
+                                <span class="option-desc">(re module)</span>
+                            </div>
+                            <div class="dropdown-option" data-value="sed">
+                                <span class="option-name">sed</span>
+                                <span class="option-desc">(Stream editor)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="regex-mode" value="javascript">
+                    <span class="mode-info" id="mode-info">ℹ️</span>
+                </div>
+                <div class="regex-input-container">
+                    <span class="regex-delimiter">/</span>
+                    <input type="text" id="regex-input" placeholder="Enter your regex pattern" autocomplete="off">
+                    <span class="regex-delimiter">/</span>
+                    <input type="text" id="regex-flags" placeholder="gimsu" maxlength="10" autocomplete="off">
+                    <span class="flags-info" id="flags-info">?</span>
+                </div>
+                <div id="regex-error" class="error-message"></div>
+            </div>
+
+            <!-- Pattern Explanation Panel -->
+            <div id="pattern-explanation-container"></div>
+
+            <div class="test-section">
+                <h2>Test String</h2>
+                <div class="textarea-container">
+                    <textarea id="test-input" placeholder="Enter your test string here..."></textarea>
+                    <div id="highlighted-text" class="highlighted-overlay"></div>
+                </div>
+            </div>
+
+            <div class="results-section">
+                <h2>Matches</h2>
+                <div id="match-count" class="match-count">No matches found</div>
+                <div id="match-details" class="match-details"></div>
+            </div>
+
+            <!-- Replacement Preview Section -->
+            <div id="replacement-section-container"></div>
+
+            <!-- Pattern Library Section -->
+            <div id="pattern-library-container"></div>
+
+            <div class="help-section">
+                <div class="help-header">
+                    <h2>Regex Help & Reference</h2>
+                    <button class="help-toggle" id="help-toggle">Show Help</button>
+                </div>
+                <div class="help-content" id="help-content" style="display: none;">
+                    <div class="mode-notice" id="mode-notice"></div>
+                    <div class="help-tabs" id="help-tabs">
+                        <!-- Tabs will be generated dynamically -->
+                    </div>
+                    
+                    <div class="help-tab-content" id="help-tab-content">
+                        <!-- Content will be generated dynamically based on selected mode -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for mode info -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Regex Mode Information</h3>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <div class="modal-content" id="modal-content"></div>
+        </div>
+    </div>
+
+    <script src="mode-help.js"></script>
+    <script src="regex-parser.js"></script>
+    <script src="syntax-highlighter.js"></script>
+    <script src="pattern-explainer.js"></script>
+    <script src="enhanced-tooltips.js"></script>
+    <script src="replacement-preview.js"></script>
+    <script src="pattern-library.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
