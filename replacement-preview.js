@@ -14,21 +14,19 @@ class ReplacementPreview {
     this.lastFlags = '';
     this.lastText = '';
     this.lastReplacement = '';
-    
-    this.initialize();
   }
   
   /**
    * Initialize the replacement preview
    */
-  initialize() {
+  init(containerId) {
     // Create the replacement section
     this.container = this.createReplacementSection();
     
-    // Insert after the test section
-    const testSection = document.querySelector('.test-section');
-    if (testSection && testSection.parentNode) {
-      testSection.parentNode.insertBefore(this.container, testSection.nextSibling);
+    // Insert into specified container
+    const targetContainer = document.getElementById(containerId);
+    if (targetContainer) {
+      targetContainer.appendChild(this.container);
     }
     
     // Set up event listeners

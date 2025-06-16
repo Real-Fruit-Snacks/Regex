@@ -13,15 +13,24 @@ class PatternExplainer {
   /**
    * Initialize the explanation panel
    */
-  initialize() {
+  init(containerId, getModeCallback) {
+    this.getMode = getModeCallback || (() => 'javascript');
+    
     // Create the explanation panel
     this.container = this.createExplanationPanel();
     
-    // Insert after the regex section
-    const regexSection = document.querySelector('.regex-section');
-    if (regexSection && regexSection.parentNode) {
-      regexSection.parentNode.insertBefore(this.container, regexSection.nextSibling);
+    // Insert into specified container
+    const targetContainer = document.getElementById(containerId);
+    if (targetContainer) {
+      targetContainer.appendChild(this.container);
     }
+  }
+  
+  /**
+   * Update the explanation (alias for explain)
+   */
+  updateExplanation(pattern, mode) {
+    this.explain(pattern, mode || this.getMode());
   }
   
   /**

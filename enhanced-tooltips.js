@@ -10,14 +10,12 @@ class EnhancedTooltips {
     this.hideTimeout = null;
     this.showTimeout = null;
     this.isHovering = false;
-    
-    this.initialize();
   }
   
   /**
    * Initialize the tooltip system
    */
-  initialize() {
+  init() {
     // Create tooltip element
     this.tooltip = this.createTooltip();
     document.body.appendChild(this.tooltip);

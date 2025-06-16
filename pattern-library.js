@@ -11,8 +11,7 @@ class PatternLibrary {
     this.selectedCategory = 'all';
     this.customPatterns = this.loadCustomPatterns();
     this.isExpanded = false;
-    
-    this.initialize();
+    this.onPatternSelect = null;
   }
   
   /**
@@ -275,13 +274,14 @@ class PatternLibrary {
   /**
    * Initialize the pattern library
    */
-  initialize() {
+  init(containerId, onPatternSelectCallback) {
+    this.onPatternSelect = onPatternSelectCallback;
     this.container = this.createLibraryUI();
     
-    // Insert after help section
-    const helpSection = document.querySelector('.help-section');
-    if (helpSection && helpSection.parentNode) {
-      helpSection.parentNode.insertBefore(this.container, helpSection.nextSibling);
+    // Insert into specified container
+    const targetContainer = document.getElementById(containerId);
+    if (targetContainer) {
+      targetContainer.appendChild(this.container);
     }
     
     // Set up event listeners
@@ -512,25 +512,31 @@ class PatternLibrary {
    * Use a pattern - insert it into the regex input
    */
   usePattern(pattern, flags) {
-    const regexInput = document.getElementById('regex-input');
-    const regexFlags = document.getElementById('regex-flags');
-    
-    if (regexInput && regexFlags) {
-      regexInput.value = pattern;
-      regexFlags.value = flags || '';
+    // Call the callback if provided
+    if (this.onPatternSelect) {
+      this.onPatternSelect(pattern, flags);
+    } else {
+      // Fallback to direct DOM manipulation
+      const regexInput = document.getElementById('regex-input');
+      const regexFlags = document.getElementById('regex-flags');
       
-      // Trigger input events to update the app
-      regexInput.dispatchEvent(new Event('input', { bubbles: true }));
-      regexFlags.dispatchEvent(new Event('input', { bubbles: true }));
-      
-      // Scroll to regex input
-      regexInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      
-      // Flash the input to show it was updated
-      regexInput.classList.add('pattern-applied');
-      setTimeout(() => {
-        regexInput.classList.remove('pattern-applied');
-      }, 1000);
+      if (regexInput && regexFlags) {
+        regexInput.value = pattern;
+        regexFlags.value = flags || '';
+        
+        // Trigger input events to update the app
+        regexInput.dispatchEvent(new Event('input', { bubbles: true }));
+        regexFlags.dispatchEvent(new Event('input', { bubbles: true }));
+        
+        // Scroll to regex input
+        regexInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // Flash the input to show it was updated
+        regexInput.classList.add('pattern-applied');
+        setTimeout(() => {
+          regexInput.classList.remove('pattern-applied');
+        }, 1000);
+      }
     }
   }
   
