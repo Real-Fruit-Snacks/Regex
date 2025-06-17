@@ -198,6 +198,72 @@
             margin-top: 4px;
         }
 
+        .conversions {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .conversions h3 {
+            color: #374151;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .conversion-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .conversion-item {
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .conversion-tool {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .conversion-pattern {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            background: #f9fafb;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+            word-break: break-all;
+        }
+
+        .conversion-note {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .tool-badge {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        .tool-badge.javascript { background: #fef3c7; color: #92400e; }
+        .tool-badge.grep { background: #dbeafe; color: #1e40af; }
+        .tool-badge.egrep { background: #d1fae5; color: #065f46; }
+        .tool-badge.sed { background: #fce7f3; color: #831843; }
+        .tool-badge.vim { background: #e9d5ff; color: #6b21a8; }
+
         @media (max-width: 600px) {
             body {
                 padding: 10px;
@@ -268,6 +334,13 @@
                 </div>
             </div>
 
+            <div class="conversions" id="conversions" style="display: none;">
+                <h3>How to use this pattern in other tools:</h3>
+                <div class="conversion-grid" id="conversion-grid">
+                    <!-- Conversions will be populated here -->
+                </div>
+            </div>
+
             <div class="help">
                 <h3>Quick Reference</h3>
                 <ul>
@@ -314,6 +387,9 @@
 
                 // Clear previous results
                 this.highlightedText.className = 'highlighted-text';
+                
+                // Update conversions
+                this.updateConversions(pattern, flags);
                 
                 if (!pattern) {
                     this.showPlaceholder();
@@ -402,6 +478,7 @@
             showPlaceholder() {
                 this.highlightedText.textContent = 'Enter a regex pattern and test text to see matches highlighted here.';
                 this.matchCount.textContent = '0 matches';
+                document.getElementById('conversions').style.display = 'none';
             }
 
             showNoText() {
@@ -419,6 +496,135 @@
                 const div = document.createElement('div');
                 div.textContent = text;
                 return div.innerHTML;
+            }
+
+            updateConversions(pattern, flags) {
+                const conversionsDiv = document.getElementById('conversions');
+                const gridDiv = document.getElementById('conversion-grid');
+                
+                if (!pattern) {
+                    conversionsDiv.style.display = 'none';
+                    return;
+                }
+                
+                conversionsDiv.style.display = 'block';
+                
+                const conversions = [
+                    {
+                        tool: 'grep',
+                        badge: 'Basic',
+                        pattern: this.convertToGrep(pattern),
+                        note: 'Use backslashes for special chars: \\+, \\?, \\{, \\}, \\(, \\)'
+                    },
+                    {
+                        tool: 'egrep',
+                        badge: 'Extended',
+                        pattern: this.convertToEgrep(pattern),
+                        note: 'Extended regex, similar to JavaScript but no \\d, \\w, \\s'
+                    },
+                    {
+                        tool: 'sed',
+                        badge: 'Stream',
+                        pattern: this.convertToSed(pattern),
+                        note: 'Use with s/// command: sed \'s/' + this.convertToSed(pattern) + '/replacement/g\''
+                    },
+                    {
+                        tool: 'vim',
+                        badge: 'Editor',
+                        pattern: this.convertToVim(pattern),
+                        note: 'Default magic mode. Use \\v for very magic (more like JavaScript)'
+                    }
+                ];
+                
+                gridDiv.innerHTML = conversions.map(conv => `
+                    <div class="conversion-item">
+                        <div class="conversion-tool">
+                            ${conv.tool}
+                            <span class="tool-badge ${conv.tool}">${conv.badge}</span>
+                        </div>
+                        <div class="conversion-pattern">${this.escapeHtml(conv.pattern)}</div>
+                        <div class="conversion-note">${conv.note}</div>
+                    </div>
+                `).join('');
+            }
+
+            convertToGrep(pattern) {
+                // Basic grep requires backslashes for special meaning
+                return pattern
+                    .replace(/\\/g, '\\\\')  // Escape existing backslashes first
+                    .replace(/\+/g, '\\+')
+                    .replace(/\?/g, '\\?')
+                    .replace(/\{/g, '\\{')
+                    .replace(/\}/g, '\\}')
+                    .replace(/\(/g, '\\(')
+                    .replace(/\)/g, '\\)')
+                    .replace(/\|/g, '\\|')
+                    // Remove JavaScript-specific shortcuts
+                    .replace(/\\d/g, '[0-9]')
+                    .replace(/\\D/g, '[^0-9]')
+                    .replace(/\\w/g, '[a-zA-Z0-9_]')
+                    .replace(/\\W/g, '[^a-zA-Z0-9_]')
+                    .replace(/\\s/g, '[ \\t\\n\\r\\f]')
+                    .replace(/\\S/g, '[^ \\t\\n\\r\\f]');
+            }
+
+            convertToEgrep(pattern) {
+                // Extended grep - more like JavaScript but no shortcuts
+                return pattern
+                    .replace(/\\d/g, '[0-9]')
+                    .replace(/\\D/g, '[^0-9]')
+                    .replace(/\\w/g, '[a-zA-Z0-9_]')
+                    .replace(/\\W/g, '[^a-zA-Z0-9_]')
+                    .replace(/\\s/g, '[ \\t\\n\\r\\f]')
+                    .replace(/\\S/g, '[^ \\t\\n\\r\\f]');
+            }
+
+            convertToSed(pattern) {
+                // sed is similar to grep but used differently
+                return pattern
+                    .replace(/\\/g, '\\\\')  // Escape existing backslashes first
+                    .replace(/\+/g, '\\+')
+                    .replace(/\?/g, '\\?')
+                    .replace(/\{/g, '\\{')
+                    .replace(/\}/g, '\\}')
+                    .replace(/\(/g, '\\(')
+                    .replace(/\)/g, '\\)')
+                    .replace(/\|/g, '\\|')
+                    .replace(/\//g, '\\/')  // Escape forward slashes for sed
+                    // Remove JavaScript-specific shortcuts
+                    .replace(/\\d/g, '[0-9]')
+                    .replace(/\\D/g, '[^0-9]')
+                    .replace(/\\w/g, '[a-zA-Z0-9_]')
+                    .replace(/\\W/g, '[^a-zA-Z0-9_]')
+                    .replace(/\\s/g, '[ \\t\\n\\r\\f]')
+                    .replace(/\\S/g, '[^ \\t\\n\\r\\f]');
+            }
+
+            convertToVim(pattern) {
+                // Vim in default magic mode
+                let vimPattern = pattern
+                    // In vim magic mode, these need backslashes
+                    .replace(/\+/g, '\\+')
+                    .replace(/\?/g, '\\?')
+                    .replace(/\{/g, '\\{')
+                    .replace(/\}/g, '\\}')
+                    .replace(/\(/g, '\\(')
+                    .replace(/\)/g, '\\)')
+                    .replace(/\|/g, '\\|')
+                    // Vim doesn't support these in magic mode
+                    .replace(/\\d/g, '[0-9]')
+                    .replace(/\\D/g, '[^0-9]')
+                    .replace(/\\w/g, '[a-zA-Z0-9_]')
+                    .replace(/\\W/g, '[^a-zA-Z0-9_]')
+                    .replace(/\\s/g, '[ \\t\\n\\r\\f]')
+                    .replace(/\\S/g, '[^ \\t\\n\\r\\f]');
+                
+                // Note about very magic mode
+                if (pattern.includes('\\d') || pattern.includes('\\w') || pattern.includes('\\s')) {
+                    return '\\v' + pattern + ' (very magic mode)';
+                }
+                
+                return vimPattern;
             }
         }
 
