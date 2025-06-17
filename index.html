@@ -149,6 +149,28 @@
             border-radius: 4px;
             font-size: 12px;
             font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Animation for match count changes */
+        @keyframes pulseCount {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 204, 102, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 4px rgba(255, 204, 102, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 204, 102, 0);
+            }
+        }
+
+        .match-count.pulse {
+            animation: pulseCount 0.5s ease-out;
         }
 
         .highlighted-text {
@@ -256,11 +278,43 @@
             font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
             font-size: 14px;
             background: #1f2430;
-            padding: 8px 12px;
+            padding: 8px 40px 8px 12px;
             border-radius: 4px;
             border: 1px solid #33415e;
             color: #ffcc66;
             word-break: break-all;
+            position: relative;
+        }
+
+        .copy-button {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #33415e;
+            border: none;
+            color: #cbccc6;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            opacity: 0.7;
+        }
+
+        .copy-button:hover {
+            background: #ffcc66;
+            color: #1f2430;
+            opacity: 1;
+        }
+
+        .copy-button:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .copy-button.copied {
+            background: #95e6cb;
+            color: #1f2430;
         }
 
         .conversion-note {
@@ -436,6 +490,7 @@
                 this.testText = document.getElementById('test-text');
                 this.highlightedText = document.getElementById('highlighted-text');
                 this.matchCount = document.getElementById('match-count');
+                this.lastMatchCount = 0;
                 
                 this.init();
             }
@@ -543,23 +598,33 @@
             updateMatchCount(count) {
                 const text = count === 1 ? '1 match' : `${count} matches`;
                 this.matchCount.textContent = text;
+                
+                // Animate if count changed
+                if (count !== this.lastMatchCount) {
+                    this.matchCount.classList.remove('pulse');
+                    // Force reflow to restart animation
+                    void this.matchCount.offsetWidth;
+                    this.matchCount.classList.add('pulse');
+                    this.lastMatchCount = count;
+                }
             }
 
             showPlaceholder() {
                 this.highlightedText.textContent = 'Enter a regex pattern and test text to see matches highlighted here.';
-                this.matchCount.textContent = '0 matches';
+                this.updateMatchCount(0);
                 document.getElementById('conversions').style.display = 'none';
             }
 
             showNoText() {
                 this.highlightedText.textContent = 'Enter some test text to see matches.';
-                this.matchCount.textContent = '0 matches';
+                this.updateMatchCount(0);
             }
 
             showError(message) {
                 this.highlightedText.className = 'highlighted-text error';
                 this.highlightedText.textContent = `Error: ${message}`;
                 this.matchCount.textContent = 'Error';
+                this.matchCount.classList.remove('pulse');
             }
 
             escapeHtml(text) {
@@ -612,10 +677,58 @@
                             ${conv.tool}
                             <span class="tool-badge ${conv.tool}">${conv.badge}</span>
                         </div>
-                        <div class="conversion-pattern">${this.escapeHtml(conv.pattern)}</div>
+                        <div class="conversion-pattern">
+                            ${this.escapeHtml(conv.pattern)}
+                            <button class="copy-button" data-pattern="${this.escapeHtml(conv.pattern).replace(/"/g, '&quot;')}">Copy</button>
+                        </div>
                         <div class="conversion-note">${conv.note}</div>
                     </div>
                 `).join('');
+                
+                // Add click listeners to copy buttons
+                setTimeout(() => {
+                    document.querySelectorAll('.copy-button').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const pattern = this.getAttribute('data-pattern');
+                            const decodedPattern = new DOMParser().parseFromString(pattern, 'text/html').body.textContent;
+                            
+                            navigator.clipboard.writeText(decodedPattern).then(() => {
+                                const originalText = this.textContent;
+                                this.textContent = 'Copied!';
+                                this.classList.add('copied');
+                                
+                                setTimeout(() => {
+                                    this.textContent = originalText;
+                                    this.classList.remove('copied');
+                                }, 2000);
+                            }).catch(err => {
+                                console.error('Failed to copy:', err);
+                                // Fallback for older browsers
+                                const textarea = document.createElement('textarea');
+                                textarea.value = decodedPattern;
+                                textarea.style.position = 'fixed';
+                                textarea.style.opacity = '0';
+                                document.body.appendChild(textarea);
+                                textarea.select();
+                                try {
+                                    document.execCommand('copy');
+                                    this.textContent = 'Copied!';
+                                    this.classList.add('copied');
+                                    setTimeout(() => {
+                                        this.textContent = 'Copy';
+                                        this.classList.remove('copied');
+                                    }, 2000);
+                                } catch (e) {
+                                    this.textContent = 'Failed';
+                                    setTimeout(() => {
+                                        this.textContent = 'Copy';
+                                    }, 2000);
+                                }
+                                document.body.removeChild(textarea);
+                            });
+                        });
+                    });
+                }, 0);
             }
 
             convertToGrep(pattern, flags) {
