@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regex Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #191e2a;
+            padding: 20px;
+            line-height: 1.6;
+            color: #cbccc6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #1f2430;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 1px solid #33415e;
+        }
+
+        .header {
+            background: #232834;
+            color: #ffcc66;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #ffcc66;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #cbccc6;
+        }
+
+        .input-row {
+            display: flex;
+            gap: 10px;
+            align-items: stretch;
+        }
+
+        .regex-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #33415e;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: #232834;
+            color: #cbccc6;
+        }
+
+        .regex-input:focus {
+            outline: none;
+            border-color: #ffcc66;
+            box-shadow: 0 0 0 3px rgba(255, 204, 102, 0.1);
+        }
+
+        .flags-input {
+            width: 80px;
+            padding: 12px;
+            border: 2px solid #33415e;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            text-align: center;
+            transition: all 0.2s;
+            background: #232834;
+            color: #cbccc6;
+        }
+
+        .flags-input:focus {
+            outline: none;
+            border-color: #ffcc66;
+            box-shadow: 0 0 0 3px rgba(255, 204, 102, 0.1);
+        }
+
+        .test-input {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 2px solid #33415e;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            resize: vertical;
+            transition: all 0.2s;
+            background: #232834;
+            color: #cbccc6;
+        }
+
+        .test-input:focus {
+            outline: none;
+            border-color: #ffcc66;
+            box-shadow: 0 0 0 3px rgba(255, 204, 102, 0.1);
+        }
+
+        .results {
+            background: #232834;
+            border-radius: 6px;
+            padding: 20px;
+            border: 1px solid #33415e;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #33415e;
+        }
+
+        .results-title {
+            font-weight: 600;
+            color: #cbccc6;
+        }
+
+        .match-count {
+            background: #ffcc66;
+            color: #1f2430;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Animation for match count changes */
+        @keyframes pulseCount {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 204, 102, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 4px rgba(255, 204, 102, 0);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 204, 102, 0);
+            }
+        }
+
+        .match-count.pulse {
+            animation: pulseCount 0.5s ease-out;
+        }
+
+        .highlighted-text {
+            background: #191e2a;
+            border: 1px solid #33415e;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-word;
+            min-height: 100px;
+            max-height: 300px;
+            overflow-y: auto;
+            color: #cbccc6;
+        }
+
+        .highlight {
+            background: rgba(255, 204, 102, 0.2);
+            border: 1px solid #ffcc66;
+            border-radius: 3px;
+            padding: 1px 2px;
+            font-weight: 500;
+            color: #ffcc66;
+        }
+
+        .error {
+            background: rgba(255, 51, 51, 0.1);
+            border: 1px solid #ff3333;
+            border-radius: 4px;
+            padding: 15px;
+            color: #ff3333;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+        }
+
+        .help {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #33415e;
+            color: #686868;
+            font-size: 14px;
+        }
+
+        .help h3 {
+            color: #cbccc6;
+            margin-bottom: 10px;
+        }
+
+        .help ul {
+            margin-left: 20px;
+        }
+
+        .help li {
+            margin-bottom: 5px;
+        }
+
+        .help li strong {
+            color: #ffcc66;
+        }
+
+        .flag-hint {
+            font-size: 12px;
+            color: #686868;
+            margin-top: 4px;
+        }
+
+        .conversions {
+            margin-top: 30px;
+            padding: 20px;
+            background: #232834;
+            border-radius: 6px;
+            border: 1px solid #33415e;
+        }
+
+        .conversions h3 {
+            color: #cbccc6;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .conversion-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .conversion-item {
+            background: #191e2a;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #33415e;
+        }
+
+        .conversion-tool {
+            font-weight: 600;
+            color: #cbccc6;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .conversion-pattern {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            background: #1f2430;
+            padding: 8px 40px 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #33415e;
+            color: #ffcc66;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .copy-button {
+            position: absolute;
+            right: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #33415e;
+            border: none;
+            color: #cbccc6;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            opacity: 0.7;
+        }
+
+        .copy-button:hover {
+            background: #ffcc66;
+            color: #1f2430;
+            opacity: 1;
+        }
+
+        .copy-button:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        .copy-button.copied {
+            background: #95e6cb;
+            color: #1f2430;
+        }
+
+        .conversion-note {
+            font-size: 12px;
+            color: #686868;
+            margin-top: 8px;
+            font-style: italic;
+        }
+
+        .tool-badge {
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+
+        .tool-badge.javascript { background: #ffcc66; color: #1f2430; }
+        .tool-badge.grep { background: #73d0ff; color: #1f2430; }
+        .tool-badge.egrep { background: #95e6cb; color: #1f2430; }
+        .tool-badge.sed { background: #d4bfff; color: #1f2430; }
+        .tool-badge.vim { background: #bae67e; color: #1f2430; }
+
+        /* Scrollbar styling for Ayu Mirage theme */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #191e2a;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #33415e;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ffcc66;
+        }
+
+        /* Firefox scrollbar styling */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #33415e #191e2a;
+        }
+
+        /* Placeholder styling */
+        ::placeholder {
+            color: #686868;
+            opacity: 1;
+        }
+
+        :-ms-input-placeholder {
+            color: #686868;
+        }
+
+        ::-ms-input-placeholder {
+            color: #686868;
+        }
+
+        /* Selection styling */
+        ::selection {
+            background: #33415e;
+            color: #cbccc6;
+        }
+
+        ::-moz-selection {
+            background: #33415e;
+            color: #cbccc6;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .input-row {
+                flex-direction: column;
+            }
+            
+            .flags-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Regex Tester</h1>
+        </div>
+        
+        <div class="content">
+            <div class="input-group">
+                <label for="regex">Regular Expression:</label>
+                <div class="input-row">
+                    <input 
+                        type="text" 
+                        id="regex" 
+                        class="regex-input" 
+                        placeholder="Enter your regex pattern..."
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                    <input 
+                        type="text" 
+                        id="flags" 
+                        class="flags-input" 
+                        placeholder="gim"
+                        autocomplete="off"
+                        spellcheck="false"
+                        maxlength="10"
+                    >
+                </div>
+                <div class="flag-hint">Common flags: g (global), i (ignore case), m (multiline)</div>
+            </div>
+
+            <div class="input-group">
+                <label for="test-text">Test Text:</label>
+                <textarea 
+                    id="test-text" 
+                    class="test-input" 
+                    placeholder="Enter text to test against your regex..."
+                    spellcheck="false"
+                ></textarea>
+            </div>
+
+            <div class="results">
+                <div class="results-header">
+                    <div class="results-title">Results</div>
+                    <div class="match-count" id="match-count">0 matches</div>
+                </div>
+                <div class="highlighted-text" id="highlighted-text">
+                    Enter a regex pattern and test text to see matches highlighted here.
+                </div>
+            </div>
+
+            <div class="conversions" id="conversions" style="display: none;">
+                <h3>How to use this pattern in other tools:</h3>
+                <div class="conversion-grid" id="conversion-grid">
+                    <!-- Conversions will be populated here -->
+                </div>
+            </div>
+
+            <div class="help">
+                <h3>Quick Reference</h3>
+                <ul>
+                    <li><strong>\d</strong> - matches any digit (0-9)</li>
+                    <li><strong>\w</strong> - matches any word character (a-z, A-Z, 0-9, _)</li>
+                    <li><strong>\s</strong> - matches any whitespace character</li>
+                    <li><strong>.</strong> - matches any character except newline</li>
+                    <li><strong>+</strong> - matches one or more of the preceding character</li>
+                    <li><strong>*</strong> - matches zero or more of the preceding character</li>
+                    <li><strong>?</strong> - matches zero or one of the preceding character</li>
+                    <li><strong>[abc]</strong> - matches any character in the brackets</li>
+                    <li><strong>()</strong> - creates a capture group</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class SimpleRegexTester {
+            constructor() {
+                this.regexInput = document.getElementById('regex');
+                this.flagsInput = document.getElementById('flags');
+                this.testText = document.getElementById('test-text');
+                this.highlightedText = document.getElementById('highlighted-text');
+                this.matchCount = document.getElementById('match-count');
+                this.lastMatchCount = 0;
+                
+                this.init();
+            }
+
+            init() {
+                // Add event listeners
+                this.regexInput.addEventListener('input', () => this.testRegex());
+                this.flagsInput.addEventListener('input', () => this.testRegex());
+                this.testText.addEventListener('input', () => this.testRegex());
+                
+                // Test regex on page load
+                this.testRegex();
+            }
+
+            testRegex() {
+                const pattern = this.regexInput.value.trim();
+                const flags = this.flagsInput.value.trim();
+                const text = this.testText.value;
+
+                // Clear previous results
+                this.highlightedText.className = 'highlighted-text';
+                
+                // Update conversions
+                this.updateConversions(pattern, flags);
+                
+                if (!pattern) {
+                    this.showPlaceholder();
+                    return;
+                }
+
+                if (!text) {
+                    this.showNoText();
+                    return;
+                }
+
+                try {
+                    const regex = new RegExp(pattern, flags);
+                    this.highlightMatches(text, regex);
+                } catch (error) {
+                    this.showError(error.message);
+                }
+            }
+
+            highlightMatches(text, regex) {
+                const matches = [];
+                let match;
+
+                if (regex.global) {
+                    while ((match = regex.exec(text)) !== null) {
+                        matches.push({
+                            text: match[0],
+                            start: match.index,
+                            end: match.index + match[0].length
+                        });
+                        
+                        // Prevent infinite loop on empty matches
+                        if (match[0].length === 0) {
+                            regex.lastIndex++;
+                        }
+                    }
+                } else {
+                    match = regex.exec(text);
+                    if (match) {
+                        matches.push({
+                            text: match[0],
+                            start: match.index,
+                            end: match.index + match[0].length
+                        });
+                    }
+                }
+
+                this.displayResults(text, matches);
+            }
+
+            displayResults(text, matches) {
+                this.updateMatchCount(matches.length);
+
+                if (matches.length === 0) {
+                    this.highlightedText.textContent = text;
+                    return;
+                }
+
+                // Sort matches by start position
+                matches.sort((a, b) => a.start - b.start);
+
+                let highlightedHtml = '';
+                let lastIndex = 0;
+
+                matches.forEach(match => {
+                    // Add text before the match
+                    highlightedHtml += this.escapeHtml(text.slice(lastIndex, match.start));
+                    
+                    // Add the highlighted match
+                    highlightedHtml += `<span class="highlight">${this.escapeHtml(match.text)}</span>`;
+                    
+                    lastIndex = match.end;
+                });
+
+                // Add remaining text after the last match
+                highlightedHtml += this.escapeHtml(text.slice(lastIndex));
+
+                this.highlightedText.innerHTML = highlightedHtml;
+            }
+
+            updateMatchCount(count) {
+                const text = count === 1 ? '1 match' : `${count} matches`;
+                this.matchCount.textContent = text;
+                
+                // Animate if count changed
+                if (count !== this.lastMatchCount) {
+                    this.matchCount.classList.remove('pulse');
+                    // Force reflow to restart animation
+                    void this.matchCount.offsetWidth;
+                    this.matchCount.classList.add('pulse');
+                    this.lastMatchCount = count;
+                }
+            }
+
+            showPlaceholder() {
+                this.highlightedText.textContent = 'Enter a regex pattern and test text to see matches highlighted here.';
+                this.updateMatchCount(0);
+                document.getElementById('conversions').style.display = 'none';
+            }
+
+            showNoText() {
+                this.highlightedText.textContent = 'Enter some test text to see matches.';
+                this.updateMatchCount(0);
+            }
+
+            showError(message) {
+                this.highlightedText.className = 'highlighted-text error';
+                this.highlightedText.textContent = `Error: ${message}`;
+                this.matchCount.textContent = 'Error';
+                this.matchCount.classList.remove('pulse');
+            }
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            updateConversions(pattern, flags) {
+                const conversionsDiv = document.getElementById('conversions');
+                const gridDiv = document.getElementById('conversion-grid');
+                
+                if (!pattern) {
+                    conversionsDiv.style.display = 'none';
+                    return;
+                }
+                
+                conversionsDiv.style.display = 'block';
+                
+                const conversions = [
+                    {
+                        tool: 'grep',
+                        badge: 'Basic',
+                        pattern: this.convertToGrep(pattern, flags),
+                        note: this.getGrepNote(flags)
+                    },
+                    {
+                        tool: 'egrep',
+                        badge: 'Extended',
+                        pattern: this.convertToEgrep(pattern, flags),
+                        note: this.getEgrepNote(flags)
+                    },
+                    {
+                        tool: 'sed',
+                        badge: 'Stream',
+                        pattern: this.convertToSed(pattern, flags),
+                        note: this.getSedNote(pattern, flags)
+                    },
+                    {
+                        tool: 'vim',
+                        badge: 'Editor',
+                        pattern: this.convertToVim(pattern, flags),
+                        note: this.getVimNote(pattern, flags)
+                    }
+                ];
+                
+                gridDiv.innerHTML = conversions.map(conv => `
+                    <div class="conversion-item">
+                        <div class="conversion-tool">
+                            ${conv.tool}
+                            <span class="tool-badge ${conv.tool}">${conv.badge}</span>
+                        </div>
+                        <div class="conversion-pattern">
+                            ${this.escapeHtml(conv.pattern)}
+                            <button class="copy-button" data-pattern="${this.escapeHtml(conv.pattern).replace(/"/g, '&quot;')}">Copy</button>
+                        </div>
+                        <div class="conversion-note">${conv.note}</div>
+                    </div>
+                `).join('');
+                
+                // Add click listeners to copy buttons
+                setTimeout(() => {
+                    document.querySelectorAll('.copy-button').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const pattern = this.getAttribute('data-pattern');
+                            const decodedPattern = new DOMParser().parseFromString(pattern, 'text/html').body.textContent;
+                            
+                            navigator.clipboard.writeText(decodedPattern).then(() => {
+                                const originalText = this.textContent;
+                                this.textContent = 'Copied!';
+                                this.classList.add('copied');
+                                
+                                setTimeout(() => {
+                                    this.textContent = originalText;
+                                    this.classList.remove('copied');
+                                }, 2000);
+                            }).catch(err => {
+                                console.error('Failed to copy:', err);
+                                // Fallback for older browsers
+                                const textarea = document.createElement('textarea');
+                                textarea.value = decodedPattern;
+                                textarea.style.position = 'fixed';
+                                textarea.style.opacity = '0';
+                                document.body.appendChild(textarea);
+                                textarea.select();
+                                try {
+                                    document.execCommand('copy');
+                                    this.textContent = 'Copied!';
+                                    this.classList.add('copied');
+                                    setTimeout(() => {
+                                        this.textContent = 'Copy';
+                                        this.classList.remove('copied');
+                                    }, 2000);
+                                } catch (e) {
+                                    this.textContent = 'Failed';
+                                    setTimeout(() => {
+                                        this.textContent = 'Copy';
+                                    }, 2000);
+                                }
+                                document.body.removeChild(textarea);
+                            });
+                        });
+                    });
+                }, 0);
+            }
+
+            convertToGrep(pattern, flags) {
+                // Basic grep requires backslashes for special meaning
+                let grepPattern = pattern
+                    .replace(/\\/g, '\\\\')  // Escape existing backslashes first
+                    .replace(/\+/g, '\\+')
+                    .replace(/\?/g, '\\?')
+                    .replace(/\{/g, '\\{')
+                    .replace(/\}/g, '\\}')
+                    .replace(/\(/g, '\\(')
+                    .replace(/\)/g, '\\)')
+                    .replace(/\|/g, '\\|')
+                    // Remove JavaScript-specific shortcuts
+                    .replace(/\\d/g, '[0-9]')
+                    .replace(/\\D/g, '[^0-9]')
+                    .replace(/\\w/g, '[a-zA-Z0-9_]')
+                    .replace(/\\W/g, '[^a-zA-Z0-9_]')
+                    .replace(/\\s/g, '[ \\t\\n\\r\\f]')
+                    .replace(/\\S/g, '[^ \\t\\n\\r\\f]');
+                
+                // Handle flags - show as actual grep command
+                let grepCmd = 'grep';
+                if (flags.includes('i')) grepCmd += ' -i';
+                grepCmd += ` '${grepPattern}'`;
+                if (!flags.includes('g')) grepCmd += ' | head -1';  // Only first match if no global flag
+                
+                return grepCmd;
+            }
+
+            convertToEgrep(pattern, flags) {
+                // Extended grep - more like JavaScript but no shortcuts
+                let egrepPattern = pattern
+                    .replace(/\\d/g, '[0-9]')
+                    .replace(/\\D/g, '[^0-9]')
+                    .replace(/\\w/g, '[a-zA-Z0-9_]')
+                    .replace(/\\W/g, '[^a-zA-Z0-9_]')
+                    .replace(/\\s/g, '[ \\t\\n\\r\\f]')
+                    .replace(/\\S/g, '[^ \\t\\n\\r\\f]');
+                
+                // Handle flags - show as actual egrep command
+                let egrepCmd = 'egrep';
+                if (flags.includes('i')) egrepCmd += ' -i';
+                egrepCmd += ` '${egrepPattern}'`;
+                if (!flags.includes('g')) egrepCmd += ' | head -1';  // Only first match if no global flag
+                
+                return egrepCmd;
+            }
+
+            convertToSed(pattern, flags) {
+                // sed is similar to grep but used differently
+                let sedPattern = pattern
+                    .replace(/\\/g, '\\\\')  // Escape existing backslashes first
+                    .replace(/\+/g, '\\+')
+                    .replace(/\?/g, '\\?')
+                    .replace(/\{/g, '\\{')
+                    .replace(/\}/g, '\\}')
+                    .replace(/\(/g, '\\(')
+                    .replace(/\)/g, '\\)')
+                    .replace(/\|/g, '\\|')
+                    .replace(/\//g, '\\/')  // Escape forward slashes for sed
+                    // Remove JavaScript-specific shortcuts
+                    .replace(/\\d/g, '[0-9]')
+                    .replace(/\\D/g, '[^0-9]')
+                    .replace(/\\w/g, '[a-zA-Z0-9_]')
+                    .replace(/\\W/g, '[^a-zA-Z0-9_]')
+                    .replace(/\\s/g, '[ \\t\\n\\r\\f]')
+                    .replace(/\\S/g, '[^ \\t\\n\\r\\f]');
+                
+                // Build sed command with flags
+                let sedFlags = '';
+                if (flags.includes('g')) sedFlags += 'g';
+                if (flags.includes('i')) sedFlags += 'I';  // sed uses 'I' for case-insensitive
+                
+                return `s/${sedPattern}/replacement/${sedFlags}`;
+            }
+
+            convertToVim(pattern, flags) {
+                // Vim in default magic mode
+                let vimPattern = pattern
+                    // In vim magic mode, these need backslashes
+                    .replace(/\+/g, '\\+')
+                    .replace(/\?/g, '\\?')
+                    .replace(/\{/g, '\\{')
+                    .replace(/\}/g, '\\}')
+                    .replace(/\(/g, '\\(')
+                    .replace(/\)/g, '\\)')
+                    .replace(/\|/g, '\\|')
+                    // Vim doesn't support these in magic mode
+                    .replace(/\\d/g, '[0-9]')
+                    .replace(/\\D/g, '[^0-9]')
+                    .replace(/\\w/g, '[a-zA-Z0-9_]')
+                    .replace(/\\W/g, '[^a-zA-Z0-9_]')
+                    .replace(/\\s/g, '[ \\t\\n\\r\\f]')
+                    .replace(/\\S/g, '[^ \\t\\n\\r\\f]');
+                
+                // Handle flags
+                let vimCommand = '/';
+                
+                // Note about very magic mode
+                if (pattern.includes('\\d') || pattern.includes('\\w') || pattern.includes('\\s')) {
+                    vimCommand += '\\v' + pattern;
+                } else {
+                    vimCommand += vimPattern;
+                }
+                
+                vimCommand += '/';
+                
+                // Add vim flags
+                if (flags.includes('g')) vimCommand += 'g';
+                if (flags.includes('i')) vimCommand += 'i';
+                if (flags.includes('m')) vimCommand += ''; // vim handles multiline by default
+                
+                return vimCommand;
+            }
+
+            getGrepNote(flags) {
+                let note = 'Use backslashes for special chars: \\+, \\?, \\{, \\}, \\(, \\)';
+                if (flags.includes('i')) note += ' • Case-insensitive with -i flag';
+                if (!flags.includes('g')) note += ' • Shows only first match (add g flag for all)';
+                return note;
+            }
+
+            getEgrepNote(flags) {
+                let note = 'Extended regex, similar to JavaScript but no \\d, \\w, \\s';
+                if (flags.includes('i')) note += ' • Case-insensitive with -i flag';
+                if (!flags.includes('g')) note += ' • Shows only first match (add g flag for all)';
+                return note;
+            }
+
+            getSedNote(pattern, flags) {
+                let note = 'Stream editor substitution command';
+                if (flags.includes('i')) note += ' • Case-insensitive with I flag';
+                if (!flags.includes('g')) note += ' • Replaces only first match per line';
+                else note += ' • Global replacement with g flag';
+                return note;
+            }
+
+            getVimNote(pattern, flags) {
+                let note = '';
+                if (pattern.includes('\\d') || pattern.includes('\\w') || pattern.includes('\\s')) {
+                    note = 'Using very magic mode (\\v) for JavaScript-like syntax';
+                } else {
+                    note = 'Default magic mode. Use \\v for very magic (more like JavaScript)';
+                }
+                if (flags.includes('i')) note += ' • Case-insensitive search';
+                if (flags.includes('g')) note += ' • Global flag for substitutions';
+                return note;
+            }
+        }
+
+        // Initialize the regex tester when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new SimpleRegexTester();
+        });
+    </script>
+</body>
+</html>

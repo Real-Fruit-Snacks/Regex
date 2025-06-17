@@ -1,0 +1,11 @@
+{
+  "name": "regex-tester-offline",
+  "version": "1.0.0",
+  "description": "Simple offline regex tester with Ayu Mirage theme",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000 || python -m SimpleHTTPServer 8000"
+  },
+  "keywords": ["regex", "tester", "offline", "gitlab-pages"],
+  "license": "MIT"
+}
