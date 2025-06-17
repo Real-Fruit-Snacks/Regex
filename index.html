@@ -583,26 +583,26 @@
                     {
                         tool: 'grep',
                         badge: 'Basic',
-                        pattern: this.convertToGrep(pattern),
-                        note: 'Use backslashes for special chars: \\+, \\?, \\{, \\}, \\(, \\)'
+                        pattern: this.convertToGrep(pattern, flags),
+                        note: this.getGrepNote(flags)
                     },
                     {
                         tool: 'egrep',
                         badge: 'Extended',
-                        pattern: this.convertToEgrep(pattern),
-                        note: 'Extended regex, similar to JavaScript but no \\d, \\w, \\s'
+                        pattern: this.convertToEgrep(pattern, flags),
+                        note: this.getEgrepNote(flags)
                     },
                     {
                         tool: 'sed',
                         badge: 'Stream',
-                        pattern: this.convertToSed(pattern),
-                        note: 'Use with s/// command: sed \'s/' + this.convertToSed(pattern) + '/replacement/g\''
+                        pattern: this.convertToSed(pattern, flags),
+                        note: this.getSedNote(pattern, flags)
                     },
                     {
                         tool: 'vim',
                         badge: 'Editor',
-                        pattern: this.convertToVim(pattern),
-                        note: 'Default magic mode. Use \\v for very magic (more like JavaScript)'
+                        pattern: this.convertToVim(pattern, flags),
+                        note: this.getVimNote(pattern, flags)
                     }
                 ];
                 
@@ -618,9 +618,9 @@
                 `).join('');
             }
 
-            convertToGrep(pattern) {
+            convertToGrep(pattern, flags) {
                 // Basic grep requires backslashes for special meaning
-                return pattern
+                let grepPattern = pattern
                     .replace(/\\/g, '\\\\')  // Escape existing backslashes first
                     .replace(/\+/g, '\\+')
                     .replace(/\?/g, '\\?')
@@ -636,22 +636,38 @@
                     .replace(/\\W/g, '[^a-zA-Z0-9_]')
                     .replace(/\\s/g, '[ \\t\\n\\r\\f]')
                     .replace(/\\S/g, '[^ \\t\\n\\r\\f]');
+                
+                // Handle flags - show as actual grep command
+                let grepCmd = 'grep';
+                if (flags.includes('i')) grepCmd += ' -i';
+                grepCmd += ` '${grepPattern}'`;
+                if (!flags.includes('g')) grepCmd += ' | head -1';  // Only first match if no global flag
+                
+                return grepCmd;
             }
 
-            convertToEgrep(pattern) {
+            convertToEgrep(pattern, flags) {
                 // Extended grep - more like JavaScript but no shortcuts
-                return pattern
+                let egrepPattern = pattern
                     .replace(/\\d/g, '[0-9]')
                     .replace(/\\D/g, '[^0-9]')
                     .replace(/\\w/g, '[a-zA-Z0-9_]')
                     .replace(/\\W/g, '[^a-zA-Z0-9_]')
                     .replace(/\\s/g, '[ \\t\\n\\r\\f]')
                     .replace(/\\S/g, '[^ \\t\\n\\r\\f]');
+                
+                // Handle flags - show as actual egrep command
+                let egrepCmd = 'egrep';
+                if (flags.includes('i')) egrepCmd += ' -i';
+                egrepCmd += ` '${egrepPattern}'`;
+                if (!flags.includes('g')) egrepCmd += ' | head -1';  // Only first match if no global flag
+                
+                return egrepCmd;
             }
 
-            convertToSed(pattern) {
+            convertToSed(pattern, flags) {
                 // sed is similar to grep but used differently
-                return pattern
+                let sedPattern = pattern
                     .replace(/\\/g, '\\\\')  // Escape existing backslashes first
                     .replace(/\+/g, '\\+')
                     .replace(/\?/g, '\\?')
@@ -668,9 +684,16 @@
                     .replace(/\\W/g, '[^a-zA-Z0-9_]')
                     .replace(/\\s/g, '[ \\t\\n\\r\\f]')
                     .replace(/\\S/g, '[^ \\t\\n\\r\\f]');
+                
+                // Build sed command with flags
+                let sedFlags = '';
+                if (flags.includes('g')) sedFlags += 'g';
+                if (flags.includes('i')) sedFlags += 'I';  // sed uses 'I' for case-insensitive
+                
+                return `s/${sedPattern}/replacement/${sedFlags}`;
             }
 
-            convertToVim(pattern) {
+            convertToVim(pattern, flags) {
                 // Vim in default magic mode
                 let vimPattern = pattern
                     // In vim magic mode, these need backslashes
@@ -689,12 +712,58 @@
                     .replace(/\\s/g, '[ \\t\\n\\r\\f]')
                     .replace(/\\S/g, '[^ \\t\\n\\r\\f]');
                 
+                // Handle flags
+                let vimCommand = '/';
+                
                 // Note about very magic mode
                 if (pattern.includes('\\d') || pattern.includes('\\w') || pattern.includes('\\s')) {
-                    return '\\v' + pattern + ' (very magic mode)';
+                    vimCommand += '\\v' + pattern;
+                } else {
+                    vimCommand += vimPattern;
                 }
                 
-                return vimPattern;
+                vimCommand += '/';
+                
+                // Add vim flags
+                if (flags.includes('g')) vimCommand += 'g';
+                if (flags.includes('i')) vimCommand += 'i';
+                if (flags.includes('m')) vimCommand += ''; // vim handles multiline by default
+                
+                return vimCommand;
+            }
+
+            getGrepNote(flags) {
+                let note = 'Use backslashes for special chars: \\+, \\?, \\{, \\}, \\(, \\)';
+                if (flags.includes('i')) note += ' • Case-insensitive with -i flag';
+                if (!flags.includes('g')) note += ' • Shows only first match (add g flag for all)';
+                return note;
+            }
+
+            getEgrepNote(flags) {
+                let note = 'Extended regex, similar to JavaScript but no \\d, \\w, \\s';
+                if (flags.includes('i')) note += ' • Case-insensitive with -i flag';
+                if (!flags.includes('g')) note += ' • Shows only first match (add g flag for all)';
+                return note;
+            }
+
+            getSedNote(pattern, flags) {
+                let note = 'Stream editor substitution command';
+                if (flags.includes('i')) note += ' • Case-insensitive with I flag';
+                if (!flags.includes('g')) note += ' • Replaces only first match per line';
+                else note += ' • Global replacement with g flag';
+                return note;
+            }
+
+            getVimNote(pattern, flags) {
+                let note = '';
+                if (pattern.includes('\\d') || pattern.includes('\\w') || pattern.includes('\\s')) {
+                    note = 'Using very magic mode (\\v) for JavaScript-like syntax';
+                } else {
+                    note = 'Default magic mode. Use \\v for very magic (more like JavaScript)';
+                }
+                if (flags.includes('i')) note += ' • Case-insensitive search';
+                if (flags.includes('g')) note += ' • Global flag for substitutions';
+                return note;
             }
         }
 
